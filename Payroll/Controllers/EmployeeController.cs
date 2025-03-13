@@ -1,0 +1,152 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Payroll.Application.Services.ServiceInterface;
+using Payroll.Domain.Entities;
+
+
+namespace Payroll.Web.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        private readonly IEmployeeService _employeeService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IDepartmentService departmentService;
+
+        public EmployeeController(IEmployeeService employeeService, UserManager<ApplicationUser> userManager,IDepartmentService departmentService)
+        {
+            _employeeService = employeeService;
+            _userManager = userManager;
+            this.departmentService = departmentService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var employees = await _employeeService.GetEmployees();
+            return View(employees);
+        }
+
+ 
+        public async Task<IActionResult> Create()
+        {
+            var departments = await departmentService.GetDepartments();
+            ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
+          
+            return View();
+        }
+
+ 
+        [HttpPost]
+        public async Task<IActionResult> Create(Employee employee, IFormFile file, string firstName, string lastName, string email, string password)
+        {
+            var departments = await departmentService.GetDepartments();
+            ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
+
+            var user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName
+                };
+
+                var result = await _userManager.CreateAsync(user, password);
+
+                if (result.Succeeded)
+                {
+                    employee.UserId = user.Id;
+                    await _employeeService.Create(employee, file);
+                    await _userManager.AddToRoleAsync(user, "Employee");
+
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            
+            return View(employee);
+        }
+
+  
+        public async Task<IActionResult> Edit(int id)
+        {
+            var departments = await departmentService.GetDepartments();
+            ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
+            var employee = await _employeeService.GetById(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(employee.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.FirstName = user.FirstName;
+            ViewBag.LastName = user.LastName;
+            ViewBag.Email = user.Email;
+
+            return View(employee);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(Employee employee, IFormFile file, string firstName, string lastName, string email)
+        {
+            var departments = await departmentService.GetDepartments();
+            ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(employee.UserId);
+                if (user != null)
+                {
+                    user.FirstName = firstName;
+                    user.LastName = lastName;
+                    user.Email = email;
+                    await _userManager.UpdateAsync(user);
+                }
+
+                await _employeeService.Update(employee, file);
+                return RedirectToAction("Index");
+            }
+            return View(employee);
+        }
+
+   
+        public async Task<IActionResult> Details(int id)
+        {
+            var employee =await  _employeeService.GetById(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            var user = await _userManager.FindByIdAsync(employee.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.FirstName = user.FirstName;
+            ViewBag.LastName = user.LastName;
+            ViewBag.Email = user.Email;
+
+            return View(employee);
+        }
+
+    
+        public async Task<IActionResult> Delete(int id)
+        {
+            var employee = await _employeeService.GetById(id);
+            if (employee != null)
+            {
+               await _employeeService.Delete(id);
+                return RedirectToAction("Index");
+            }
+            return NotFound();
+        }
+    }
+}

@@ -1,0 +1,53 @@
+﻿@model Payroll.Domain.Entities.Employee
+
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<h2>Employee Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.ApplicationUser.FirstName @Model.ApplicationUser.LastName</h4>
+
+        <div class="row">
+            <div class="col-md-4">
+                @if (!string.IsNullOrEmpty(Model.EmployeeImage))
+                {
+                    <img src="@Model.EmployeeImage" alt="Profile Image" class="img-thumbnail" width="150" height="150" />
+                }
+                else
+                {
+                    <p>No Profile Image</p>
+                }
+            </div>
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>First Name</th>
+                        <td>@Model.ApplicationUser.FirstName</td>
+                    </tr>
+                    <tr>
+                        <th>Last Name</th>
+                        <td>@Model.ApplicationUser.LastName</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>@Model.ApplicationUser.Email</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td>@Model.DepartmentId</td>
+                    </tr>
+                    <tr>
+                        <th>Designation</th>
+                        <td>@Model.Designation</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Payroll.Domain.Entities.Department>
+@{
+	ViewData["TItle"] = "Department List";
+}
+<div class="container">
+	<h2 class="text-center">@ViewData["TItle"]</h2>
+	<div class="row">
+		<table class=" table table-bordered">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>Department Name</th>
+					<th>Department Email</th>
+					<th>Department Description </th>
+					<th> Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@{
+					int counter = 1;
+				}
+				@foreach(var dep in Model){
+					<tr>
+						<td>@counter</td>
+						<td>@dep.DepartmentName</td>
+						<td>@dep.DepartmentEmail</td>
+						<td>@dep.DepartmentDescription</td>
+						<td>
+							<a asp-controller="Department" asp-action="Edit" asp-route-id="@dep.DepartmentId" class="btn btn-outline-primary">Edit</a>
+							<a asp-action="Delete" asp-route-id="@dep.DepartmentId" onclick="confirm('Are you sure you want to delete this record?')" class="btn btn-danger">Delete</a>
+						</td>
+					</tr>
+					counter++;
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
