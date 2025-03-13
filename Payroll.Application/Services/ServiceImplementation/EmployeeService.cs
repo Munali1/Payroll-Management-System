@@ -46,15 +46,13 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public async Task<Employee> GetById(int id)
         {
-            return await unitOfWork.empRepository.GetAsync(x => x.Id==id);
+            return await unitOfWork.empRepository.GetAsync(x => x.Id==id,"ApplicationUser");
         }
 
         public async Task<List<Employee>> GetEmployees()
         {
-            return await unitOfWork.empRepository.GetAllAsync();
+            return await unitOfWork.empRepository.GetAllAsync(null,"ApplicationUser");
         }
-
-        
             public async Task Update(Employee employee, IFormFile file)
         {
             var existingEmployee = await unitOfWork.empRepository.GetAsync(x => x.Id == employee.Id);
