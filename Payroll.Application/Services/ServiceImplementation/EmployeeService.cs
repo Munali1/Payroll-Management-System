@@ -6,7 +6,7 @@ using Payroll.Domain.Entities;
 
 namespace Payroll.Application.Services.ServiceImplementation
 {
-    public class EmployeeService:IEmployeeService
+    public class EmployeeService : IEmployeeService
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -49,11 +49,22 @@ namespace Payroll.Application.Services.ServiceImplementation
             return await unitOfWork.empRepository.GetAsync(x => x.Id==id,"ApplicationUser");
         }
 
+        public int getEmpId(string id)
+        {
+            return unitOfWork.empRepository.GetEmployeeIdFromUserId(id);
+        }
+
         public async Task<List<Employee>> GetEmployees()
         {
             return await unitOfWork.empRepository.GetAllAsync(null,"ApplicationUser");
         }
-            public async Task Update(Employee employee, IFormFile file)
+
+        public string getName(string id)
+        {
+            return unitOfWork.empRepository.getFullName(id);
+        }
+
+        public async Task Update(Employee employee, IFormFile file)
         {
             var existingEmployee = await unitOfWork.empRepository.GetAsync(x => x.Id == employee.Id);
             if (existingEmployee == null) return;

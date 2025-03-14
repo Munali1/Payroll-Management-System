@@ -21,20 +21,20 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public async Task Delete(int id)
         {
-            var sal = await unitOfWork.salaryRepository.GetAsync(x => x.Id == id);
+            var sal = await unitOfWork.salaryRepository.GetAsync(x => x.Id == id,"Employee");
             unitOfWork.salaryRepository.Remove(sal);
             await unitOfWork.SaveAsync();
         }
 
         public async Task<Salary> GetById(int id)
         {
-            var sal = await unitOfWork.salaryRepository.GetAsync(x => x.Employee.Id == id);
+            var sal = await unitOfWork.salaryRepository.GetAsync(x => x.Id == id,"Employee");
             return sal;
         }
 
         public async Task<List<Salary>> GetSalaryList()
         {
-            return await unitOfWork.salaryRepository.GetAllAsync();
+            return await unitOfWork.salaryRepository.GetAllAsync(null,"Employee");
         }
 
         public async Task Update(Salary salary)

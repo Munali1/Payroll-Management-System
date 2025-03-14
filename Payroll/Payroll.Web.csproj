@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Bank\" />
+    <Folder Include="Views\NewFolder\" />
     <Folder Include="Views\Salary\" />
     <Folder Include="wwwroot\Images\" />
   </ItemGroup>

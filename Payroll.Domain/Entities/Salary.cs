@@ -15,7 +15,7 @@ namespace Payroll.Domain.Entities
         public int Id { get; set; }
         public int EmployeeId { get; set; }  
         [ForeignKey("EmployeeId")]
-        public virtual Employee Employee { get; set; }
+        public virtual Employee? Employee { get; set; }
         public decimal SalaryAmount { get; set; }
         public decimal Bonus { get; set; }
         public decimal TotalSalary { get; set; }

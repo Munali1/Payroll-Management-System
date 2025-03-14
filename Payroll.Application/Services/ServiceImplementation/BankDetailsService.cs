@@ -29,13 +29,13 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public async Task<List<BankDetails>> GetBankList()
         {
-            var dep = await unitOfWork.bankDetailsRepository.GetAllAsync();
+            var dep = await unitOfWork.bankDetailsRepository.GetAllAsync(null,"Employee");
             return dep;
         }
 
         public async Task<BankDetails> GetById(int id)
         {
-            return (await unitOfWork.bankDetailsRepository.GetAsync(x => x.Id == id));
+            return (await unitOfWork.bankDetailsRepository.GetAsync(x => x.Id == id,"Employee"));
         }
 
         public async Task Update(BankDetails bankDetails)

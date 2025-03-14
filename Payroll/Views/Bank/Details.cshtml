@@ -1,0 +1,25 @@
+﻿@model Payroll.Domain.Entities.BankDetails
+
+@{
+    ViewData["Title"] = "Bank Details";
+}
+
+<h2>Bank Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Bank Name</th>
+        <td>@Model.BankName</td>
+    </tr>
+    <tr>
+        <th>Account Number</th>
+        <td>@Model.AccountNumber</td>
+    </tr>
+    <tr>
+        <th>Account Holder</th>
+        <td>@Model.AccountHolderName</td>
+    </tr>
+</table>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back</a>

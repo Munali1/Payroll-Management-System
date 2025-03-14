@@ -15,5 +15,7 @@ namespace Payroll.Application.Services.ServiceInterface
         Task<Employee> GetById(int id);
         Task<List<Employee>> GetEmployees();
         Task Update(Employee employee, IFormFile file);
+        string getName(string id);
+        int getEmpId(string id);
     }
 }
