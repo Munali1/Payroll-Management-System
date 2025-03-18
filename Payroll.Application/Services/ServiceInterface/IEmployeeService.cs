@@ -17,5 +17,8 @@ namespace Payroll.Application.Services.ServiceInterface
         Task Update(Employee employee, IFormFile file);
         string getName(string id);
         int getEmpId(string id);
+        BankDetails EmployeeBankDetails(int id);
+        Salary EmployeeSalaryDetails(int id);
+
     }
 }

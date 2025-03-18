@@ -16,6 +16,12 @@ namespace Payroll.Infrastructure.Repository
             this.context = context;
         }
 
+        public BankDetails GetBankDetails(int id)
+        {
+            var bank = context.Banks.FirstOrDefault(x => x.EmployeeId == id);
+            return bank;
+        }
+
         public int GetEmployeeIdFromUserId(string id)
         {
             var employee=context.Employees.FirstOrDefault(x => x.UserId == id);
@@ -33,6 +39,12 @@ namespace Payroll.Infrastructure.Repository
             var employee = context.Employees.Include(e => e.ApplicationUser) .FirstOrDefault(x => x.UserId ==id);
             return $"{employee.ApplicationUser.FirstName} {employee.ApplicationUser.LastName}";
 
+        }
+
+        public Salary getSalaryDetails(int id)
+        {
+            var sal = context.Salaries.FirstOrDefault(x => x.EmployeeId == id);
+            return sal;
         }
 
         public void Update(Employee employee)

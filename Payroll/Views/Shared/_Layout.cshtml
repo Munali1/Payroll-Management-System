@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@inject IEmployeeService employeeService
+@using System.Security.Claims
+@using Payroll.Application.Services.ServiceInterface
+
+@{
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int id = employeeService.getEmpId(userId);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -34,17 +42,17 @@
                         }
                         @if (User.IsInRole("Employee"))
                         {
+                           
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Employee" asp-action="Details" asp-route-id="">Personal Details</a>
+                                <a class="nav-link text-dark" asp-controller="Employee" asp-action="Details" asp-route-id="@id">Personal Details</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Bank" asp-action="Details">Bank Details</a>
+                                <a class="nav-link text-dark" asp-controller="Employee" asp-action="BankDetails" asp-route-id="@id">Bank Details</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Salary" asp-action="Details">Salary Details</a>
+                                <a class="nav-link text-dark" asp-controller="Employee" asp-action="SalaryDetails" asp-route-id="@id">Salary Details</a>
                             </li>
                         }
-
                     </ul>
                     <partial name="_LoginPartial">
                 </div>

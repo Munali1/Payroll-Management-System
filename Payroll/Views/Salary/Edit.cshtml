@@ -1,0 +1,38 @@
+﻿@model Payroll.Domain.Entities.Salary
+@{
+    ViewData["Title"] = "Edit Salary";
+}
+<div class="container">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="EmployeeId" />
+
+        <div class="mb-3">
+            <label class="form-label">Salary Amount</label>
+            <input asp-for="SalaryAmount" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Bonus</label>
+            <input asp-for="Bonus" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Total Salary</label>
+            <input asp-for="TotalSalary" class="form-control" readonly />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Payment Date</label>
+            <input asp-for="PaymentDate" type="date" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("input", function () {
+        let salary = parseFloat(document.querySelector('[name="SalaryAmount"]').value) || 0;
+        let bonus = parseFloat(document.querySelector('[name="Bonus"]').value) || 0;
+        document.querySelector('[name="TotalSalary"]').value = salary + bonus;
+    });
+</script>

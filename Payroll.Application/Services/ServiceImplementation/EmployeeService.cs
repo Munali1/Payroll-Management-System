@@ -44,6 +44,16 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         }
 
+        public BankDetails EmployeeBankDetails(int id)
+        {
+            return unitOfWork.empRepository.GetBankDetails(id);
+        }
+
+        public Salary EmployeeSalaryDetails(int id)
+        {
+            return unitOfWork.empRepository.getSalaryDetails(id);
+        }
+
         public async Task<Employee> GetById(int id)
         {
             return await unitOfWork.empRepository.GetAsync(x => x.Id==id,"ApplicationUser");

@@ -1,0 +1,31 @@
+﻿@model Payroll.Domain.Entities.Salary
+@{
+    ViewData["Title"] = "Salary Details";
+}
+
+<div class="container">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>Employee Name</th>
+            <td>@($"{Model.Employee.ApplicationUser.FirstName} {Model.Employee.ApplicationUser.LastName}")</td>
+        </tr>
+        <tr>
+            <th>Salary Amount</th>
+            <td>@Model.SalaryAmount</td>
+        </tr>
+        <tr>
+            <th>Bonus</th>
+            <td>@Model.Bonus</td>
+        </tr>
+        <tr>
+            <th>Total Salary</th>
+            <td>@Model.TotalSalary</td>
+        </tr>
+        <tr>
+            <th>Payment Date</th>
+            <td>@Model.PaymentDate.ToString("yyyy-MM-dd")</td>
+        </tr>
+    </table>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

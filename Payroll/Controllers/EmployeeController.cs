@@ -148,5 +148,26 @@ namespace Payroll.Web.Controllers
             }
             return NotFound();
         }
+        public IActionResult BankDetails(int id)
+        { 
+            var bankDetails = _employeeService.EmployeeBankDetails(id);
+            if (bankDetails == null) {
+                return NotFound();
+            }
+            else
+            {
+                return RedirectToAction("Details", "Bank", new { id = bankDetails.Id });
+            }
+        }
+        public IActionResult SalaryDetails(int id)
+        {
+            var sal = _employeeService.EmployeeSalaryDetails(id);
+            if (sal == null)
+            {
+                return NotFound();
+            }
+            return RedirectToAction("Details", "Salary", new { id = sal.Id });
+        }
+
     }
 }
