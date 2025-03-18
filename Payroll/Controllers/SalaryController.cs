@@ -26,13 +26,24 @@ namespace Payroll.Web.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            ViewBag.Employees = await employeeService.GetEmployees();
+            var employees = await employeeService.GetEmployees();
+
+            ViewBag.Employees = employees.Select(e => new
+            {
+                Id = e.Id,
+                Name = e.ApplicationUser.FirstName + " " + e.ApplicationUser.LastName
+            }).ToList();
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Create(Salary salary)
         {
-            ViewBag.Employees = await employeeService.GetEmployees();
+            var employees = await employeeService.GetEmployees();
+            ViewBag.Employees = employees.Select(e => new
+            {
+                Id = e.Id,
+                Name = e.ApplicationUser.FirstName + " " + e.ApplicationUser.LastName
+            }).ToList();
             salary.PaymentDate = DateTime.Now;            
             if (ModelState.IsValid)
             {
@@ -43,14 +54,24 @@ namespace Payroll.Web.Controllers
         }
         public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.Employees = await employeeService.GetEmployees();
+            var employees = await employeeService.GetEmployees();
+            ViewBag.Employees = employees.Select(e => new
+            {
+                Id = e.Id,
+                Name = e.ApplicationUser.FirstName + " " + e.ApplicationUser.LastName
+            }).ToList();
             var sal = await salaryService.GetById(id);
             return View(sal);
         }
         [HttpPost]
         public async Task<IActionResult> Edit(Salary salary)
         {
-            ViewBag.Employees = await employeeService.GetEmployees();
+            var employees = await employeeService.GetEmployees();
+            ViewBag.Employees = employees.Select(e => new
+            {
+                Id = e.Id,
+                Name = e.ApplicationUser.FirstName + " " + e.ApplicationUser.LastName
+            }).ToList();
             if (ModelState.IsValid)
             {
                salary.PaymentDate=DateTime.Now; 
