@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Payroll.Application.Services.ServiceImplementation;
 using Payroll.Application.Services.ServiceInterface;
 using Payroll.Domain.Entities;
 
@@ -12,12 +13,15 @@ namespace Payroll.Web.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDepartmentService departmentService;
+        private readonly IEmailServiceInterface emailService;
 
-        public EmployeeController(IEmployeeService employeeService, UserManager<ApplicationUser> userManager,IDepartmentService departmentService)
+        public EmployeeController(IEmployeeService employeeService, UserManager<ApplicationUser> userManager,
+            IDepartmentService departmentService,IEmailServiceInterface emailService)
         {
             _employeeService = employeeService;
             _userManager = userManager;
             this.departmentService = departmentService;
+            this.emailService = emailService;
         }
 
         public async Task<IActionResult> Index()
@@ -31,7 +35,6 @@ namespace Payroll.Web.Controllers
         {
             var departments = await departmentService.GetDepartments();
             ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
-          
             return View();
         }
 
@@ -57,8 +60,16 @@ namespace Payroll.Web.Controllers
                     employee.UserId = user.Id;
                     await _employeeService.Create(employee, file);
                     await _userManager.AddToRoleAsync(user, "Employee");
+                     string subject = "Welcome to the Company";
+                     string body = $"Hello {firstName} {lastName},\n\n" +
+                              $"Your employee account has been successfully created.\n" +
+                              $"Email: {email}\n" +
+                              $"Password: {password}\n\n" +
+                              "Please change your password after your first login.\n\n" +
+                              "Best regards,\nYour Company";
+                emailService.sendEmail(email, body, subject);
 
-                    return RedirectToAction("Index");
+                return RedirectToAction("Index");
                 }
                 else
                 {

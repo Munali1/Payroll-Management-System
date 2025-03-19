@@ -28,9 +28,11 @@
     </div>
 
     <div class="form-group">
-        <label>Department</label>
-        <div id="departmentDropdown"></div>
-        <input type="hidden" id="DepartmentId" name="DepartmentId" />
+        <label asp-for="DepartmentId"></label>
+        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments" required>
+            <option value="">Select Department</option> 
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -47,19 +49,4 @@
     <a asp-action="Index" class="btn btn-secondary mt-3">Cancel</a>
 </form>
 
-@section Scripts {
-    <script>
-        $(function () {
-            $("#departmentDropdown").dxDropDownBox({
-                dataSource: @Html.Raw(Json.Serialize(ViewBag.Departments.Items)),
-                valueExpr: "Value",
-                displayExpr: "Text",
-                onValueChanged: function (e) {
-                    $("#DepartmentId").val(e.value);
-                },
-                placeholder: "Select a department",
-                showClearButton: true
-            });
-        });
-    </script>
-}
+

@@ -19,9 +19,9 @@ namespace Payroll.Web.Controllers
             this.userManager = userManager;
             this.employeeService = employeeService;
         }
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var salList=await salaryService.GetSalaryList();
+            var salList= salaryService.GetAll();
             return View(salList);
         }
         public async Task<IActionResult> Create()

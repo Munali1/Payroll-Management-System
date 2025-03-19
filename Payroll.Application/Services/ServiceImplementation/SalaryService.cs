@@ -2,7 +2,6 @@
 using Payroll.Application.Services.ServiceInterface;
 using Payroll.Domain.Entities;
 
-
 namespace Payroll.Application.Services.ServiceImplementation
 {
     public class SalaryService : ISalaryService
@@ -24,6 +23,12 @@ namespace Payroll.Application.Services.ServiceImplementation
             var sal = await unitOfWork.salaryRepository.GetAsync(x => x.Id == id,"Employee");
             unitOfWork.salaryRepository.Remove(sal);
             await unitOfWork.SaveAsync();
+        }
+
+        public IEnumerable<Salary> GetAll()
+        {
+            var sal = unitOfWork.salaryRepository.GetSalary();
+            return sal; 
         }
 
         public async Task<Salary> GetById(int id)
