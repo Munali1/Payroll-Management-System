@@ -37,6 +37,6 @@
     document.addEventListener("input", function () {
         let salary = parseFloat(document.querySelector('[name="SalaryAmount"]').value) || 0;
         let bonus = parseFloat(document.querySelector('[name="Bonus"]').value) || 0;
-        document.querySelector('[name="TotalSalary"]').value = salary + bonus;
+        document.querySelector('[name="TotalSalary"]').value = salary + ((bonus/100)*salary);
     });
 </script>

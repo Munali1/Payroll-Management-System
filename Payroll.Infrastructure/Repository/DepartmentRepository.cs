@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using Payroll.Application.Interfaces;
 using Payroll.Domain.Entities;
 using Payroll.Infrastructure.Data;
@@ -17,18 +18,13 @@ namespace FinalProject.Infrastructure.Repository
 
         public List<Employee> getEmployeesInDepartment(int id)
         {
-            var emplist = context.Employees.Where(x => x.DepartmentId == id).ToList();
+            var emplist = context.Employees.Include(e=>e.ApplicationUser).Where(x => x.DepartmentId == id).ToList();
             return emplist;
-        }
-
-        public List<Employee> getEmployeesInDepartment()
-        {
-            throw new NotImplementedException();
         }
 
         public void Update(Department department)
         {
-            var dep=context.Departments.Update(department);
+         context.Departments.Update(department);
           
         }
     }

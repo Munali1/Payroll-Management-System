@@ -11,8 +11,8 @@ namespace Payroll.Application.Interfaces
         IEmployeeRepository empRepository { get; }
         IDepartmentRepository departmentRepository { get; }
         IBankDetailsRepository bankDetailsRepository { get; }
-
         ISalaryRepository salaryRepository { get; }
+        IAttendenceRepository attendanceRepository { get; }
         Task SaveAsync();
     }
 }

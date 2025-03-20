@@ -21,6 +21,9 @@ namespace Payroll.Infrastructure.UnitOfWork
 
         public ISalaryRepository salaryRepository { get; private set; }
 
+      
+
+        public IAttendenceRepository attendanceRepository { get;private set; }
         public UnitOfWork(AppDbContext context)
         {
             this.context = context;
@@ -28,6 +31,7 @@ namespace Payroll.Infrastructure.UnitOfWork
             departmentRepository = new DepartmentRepository(context);
             bankDetailsRepository = new BankDetailsRepository(context);
             salaryRepository = new SalaryRepository(context);
+            attendanceRepository = new AttendanceRepository(context);
 
         }
         public async Task SaveAsync()

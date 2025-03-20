@@ -25,6 +25,7 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();
 builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<IEmailServiceInterface, EmailService>();
+builder.Services.AddScoped<IAttendenceService, AttendenceService>();
 
 
 var app = builder.Build();

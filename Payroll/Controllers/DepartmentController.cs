@@ -60,5 +60,10 @@ namespace Payroll.Web.Controllers
             }
             return NotFound();
         }
+        public IActionResult EmployeeList(int id)
+        {
+            var empList = departmentService.getEmployeeInDepartment(id);
+            return View(empList);
+        }
     }
 }

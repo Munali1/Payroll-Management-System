@@ -40,6 +40,11 @@ namespace Payroll.Application.Services.ServiceImplementation
             return await unitOfWork.departmentRepository.GetAllAsync();
         }
 
+        public List<Employee> getEmployeeInDepartment(int id)
+        {
+            return unitOfWork.departmentRepository.getEmployeesInDepartment(id);
+        }
+
         public async Task Update(Department department)
         {
             var dep = await unitOfWork.departmentRepository.GetAsync(x => x.DepartmentId == department.DepartmentId);

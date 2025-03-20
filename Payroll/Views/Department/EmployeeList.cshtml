@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Payroll.Domain.Entities.Employee>
+
+@{
+    ViewData["Title"] = "Employee List";
+}
+
+<h2>Employee List</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Add Employee</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Profile Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.ApplicationUser.FirstName</td>
+                <td>@employee.ApplicationUser.LastName</td>
+                <td>@employee.ApplicationUser.Email</td>
+                <td>@employee.DepartmentId</td>
+                <td>@employee.Designation</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(employee.EmployeeImage))
+                    {
+                        <img src="@employee.EmployeeImage" width="50" height="50" />
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
+           
+            </tr>
+        }
+    </tbody>
+</table>

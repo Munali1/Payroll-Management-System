@@ -15,6 +15,8 @@ namespace Payroll.Application.Services.ServiceInterface
         Task<Department> GetById(int id);
         Task<List<Department>> GetDepartments();
         Task Update(Department department);
+
+        List<Employee> getEmployeeInDepartment(int id); 
         
     }
 }

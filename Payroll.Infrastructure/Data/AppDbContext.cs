@@ -13,5 +13,6 @@ namespace Payroll.Infrastructure.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<BankDetails> Banks { get; set; }
         public DbSet<Salary> Salaries{ get; set;}
+        public DbSet<Attendence> Attendences { get; set; }
     }
 }

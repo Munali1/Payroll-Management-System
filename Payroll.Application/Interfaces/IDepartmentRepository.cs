@@ -6,7 +6,7 @@ namespace Payroll.Application.Interfaces
 {
     public interface IDepartmentRepository:IRepository<Department>
     {
-        List<Employee> getEmployeesInDepartment();
+        List<Employee> getEmployeesInDepartment(int id);
         void Update(Department department);
     }
 }
