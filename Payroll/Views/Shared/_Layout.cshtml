@@ -1,5 +1,7 @@
 ﻿@inject IEmployeeService employeeService
+@inject IAttendenceService attendanceService
 @using System.Security.Claims
+@using Payroll.Application.Services.ServiceImplementation
 @using Payroll.Application.Services.ServiceInterface
 
 
@@ -62,6 +64,16 @@
             </div>
         </nav>
     </header>
+
+ 
+     @if(User.IsInRole("Employee")){ 
+      string userid = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+       int empId = employeeService.getEmpId(userid); 
+       var attendance =await attendanceService.getLatest(empId); 
+       <partial name="_PunchInOut" model="attendance" /> 
+   
+      
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

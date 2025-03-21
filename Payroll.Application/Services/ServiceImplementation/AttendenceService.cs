@@ -28,12 +28,18 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public async Task<List<Attendence>> getAttendenceList()
         {
-            return await unitOfWork.attendanceRepository.GetAllAsync(null,"Employee");
+            return await unitOfWork.attendanceRepository.getAll();
         }
 
         public async Task<Attendence> getIndividualAttendence(int id)
         {
            return await unitOfWork.attendanceRepository.GetAsync(x=>x.AttendenceId==id,"Employee");
+        }
+
+        public async Task<Attendence> getLatest(int id)
+        {
+            var attendence = await unitOfWork.attendanceRepository.GetLastestAttendenceEmployee(id);
+            return attendence;
         }
 
         public async Task<string> GetWorkingHoursAsync(int id)
@@ -46,6 +52,41 @@ namespace Payroll.Application.Services.ServiceImplementation
             }
             TimeSpan workedDuration = attendance.outTime.Value - attendance.inTime.Value;
             return $"{workedDuration.Hours} hours {workedDuration.Minutes} mins";
+        }
+
+        public async Task PunchIn(int employeeId)
+        {
+            var existingRecord = await unitOfWork.attendanceRepository.
+                GetAsync(x => x.EmployeeId == employeeId && x.inTime != null && x.outTime == null);
+
+            if (existingRecord != null)
+            {
+                throw new Exception("You have already punched in. Please punch out first.");
+            }
+
+            var newAttendance = new Attendence
+            {
+                EmployeeId = employeeId,
+                inTime = DateTime.Now
+            };
+
+            await Create(newAttendance);
+        }
+
+        public async Task PunchOut(int employeeId)
+        {
+            var attendance = await unitOfWork.attendanceRepository
+        .GetAsync(x => x.EmployeeId == employeeId && x.outTime == null);
+
+            if (attendance == null)
+            {
+                throw new Exception("No active punch-in record found.");
+            }
+            attendance.outTime = DateTime.Now;
+            TimeSpan workedDuration = attendance.outTime.Value - attendance.inTime.Value;
+            attendance.workingHours = new DateTime().Add(workedDuration);
+
+            await Update(attendance);
         }
 
         public async Task Update(Attendence attendence)

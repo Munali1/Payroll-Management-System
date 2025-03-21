@@ -1,0 +1,45 @@
+﻿@using Payroll.Application.Services.ServiceInterface
+@using System.Security.Claims
+@inject IAttendenceService attendenceService
+@inject IEmployeeService employeeService
+@model Payroll.Domain.Entities.Attendence
+@if(User.IsInRole("Employee")){
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int id = employeeService.getEmpId(userId);
+    <div class="punch-container">
+        @if (Model == null || Model.inTime == null)
+        {
+            <form asp-controller="Attendance" asp-action="PunchIn" asp-route-id="id" method="post">
+                <button type="submit" class="btn btn-success">Punch In</button>
+            </form>
+        }
+        else if (Model.outTime == null)
+        {
+            <form asp-controller="Attendance" asp-action="PunchOut" asp-route-id="id" method="post">
+                <button type="submit" class="btn btn-danger">Punch Out</button>
+            </form>
+        }
+        <span class="punch-info">
+            Last In: @(Model?.inTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not punched in")
+            | Last Out: @(Model?.outTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not punched out")
+        </span>
+    </div>
+
+    <style>
+        .punch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .punch-info {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+
+}
