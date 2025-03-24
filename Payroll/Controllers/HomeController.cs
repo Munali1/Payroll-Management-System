@@ -5,7 +5,7 @@ using Payroll.Models;
 
 namespace Payroll.Controllers
 {
-    [Authorize]
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -14,7 +14,7 @@ namespace Payroll.Controllers
         {
             _logger = logger;
         }
-
+     
         public IActionResult Index()
         {
             return View();

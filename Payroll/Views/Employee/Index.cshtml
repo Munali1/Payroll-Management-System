@@ -5,8 +5,10 @@
 }
 
 <h2>Employee List</h2>
+@if(User.IsInRole("Admin")){
+    <a asp-action="Create" class="btn btn-success mb-3">Add Employee</a>
+}
 
-<a asp-action="Create" class="btn btn-success mb-3">Add Employee</a>
 
 <table class="table table-bordered">
     <thead>

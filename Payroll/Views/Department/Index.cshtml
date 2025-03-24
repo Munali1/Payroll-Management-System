@@ -2,8 +2,13 @@
 @{
     ViewData["Title"] = "Department List";
 }
+
 <div class="container">
     <h2 class="text-center">@ViewData["Title"]</h2>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-success mb-3">Add Department</a>
+    }
     <div class="row">
         <table class="table table-bordered">
             <thead>
@@ -24,13 +29,16 @@
                         <td>@dep.value.DepartmentEmail</td>
                         <td>@dep.value.DepartmentDescription</td>
                         <td>
-                            
-                            <a asp-controller="Department" asp-action="Edit" asp-route-id="@dep.value.DepartmentId" class="btn btn-outline-primary">
-                                <i class="bi bi-pencil-square"></i> Edit
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@dep.value.DepartmentId" onclick="return confirm('Are you sure you want to delete this record?');" class="btn btn-danger">
-                                <i class="bi bi-trash"></i> Delete
-                            </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-controller="Department" asp-action="Edit" asp-route-id="@dep.value.DepartmentId" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@dep.value.DepartmentId" onclick="return confirm('Are you sure you want to delete this record?');" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            }
+                           
                             <a asp-controller="Department" asp-action="EmployeeList" asp-route-id="@dep.value.DepartmentId" class="btn btn-outline-primary">
                                 <i class="bi bi-person-lines-fill"></i> View Employees
                             </a>

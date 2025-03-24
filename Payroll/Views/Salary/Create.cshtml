@@ -2,41 +2,44 @@
 @{
     ViewData["Title"] = "Add Salary";
 }
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="text-center">@ViewData["Title"]</h2>
-            <form asp-action="Create" method="post">
-                <div class="mb-3">
-                    <label class="form-label">Employee</label>
-                    <select asp-for="EmployeeId" class="form-control" asp-items="@(new SelectList(ViewBag.Employees, "Id", "Name"))" required>
-                        <option value="">Select Employee</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Salary Amount</label>
-                    <input asp-for="SalaryAmount" class="form-control" type="number" step="0.01" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Bonus</label>
-                    <input asp-for="Bonus" class="form-control" type="number" step="0.01" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Total Salary</label>
-                    <input asp-for="TotalSalary" class="form-control" readonly />
-                </div>
-                <button type="submit" class="btn btn-success">Save</button>
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-            </form>
+@if(User.IsInRole("HR")){
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">@ViewData["Title"]</h2>
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Employee</label>
+                        <select asp-for="EmployeeId" class="form-control" asp-items="@(new SelectList(ViewBag.Employees, "Id", "Name"))" required>
+                            <option value="">Select Employee</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Salary Amount</label>
+                        <input asp-for="SalaryAmount" class="form-control" type="number" step="0.01" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bonus</label>
+                        <input asp-for="Bonus" class="form-control" type="number" step="0.01" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Total Salary</label>
+                        <input asp-for="TotalSalary" class="form-control" readonly />
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener("input", function () {
-        let salary = parseFloat(document.querySelector('[name="SalaryAmount"]').value) || 0;
-        let bonus = parseFloat(document.querySelector('[name="Bonus"]').value) || 0;
-        document.querySelector('[name="TotalSalary"]').value = salary + ((bonus/100)*salary);
-    });
-</script>
+    <script>
+        document.addEventListener("input", function () {
+            let salary = parseFloat(document.querySelector('[name="SalaryAmount"]').value) || 0;
+            let bonus = parseFloat(document.querySelector('[name="Bonus"]').value) || 0;
+            document.querySelector('[name="TotalSalary"]').value = salary + ((bonus/100)*salary);
+        });
+    </script>
+
+}
+
