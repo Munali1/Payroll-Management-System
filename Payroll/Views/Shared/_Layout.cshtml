@@ -4,44 +4,41 @@
 @using Payroll.Application.Services.ServiceImplementation
 @using Payroll.Application.Services.ServiceInterface
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PayrollManagement</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Payroll Management</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.3/css/dx.light.css">
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.3/css/dx.material.blue.light.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn3.devexpress.com/jslib/24.2.3/js/dx.all.js" defer></script>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Payroll Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Payroll Management</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         @if (User.IsInRole("Admin") || User.IsInRole("HR"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employee</a>
+                                <a class="nav-link text-light" asp-controller="Employee" asp-action="Index">Employees</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index">Department</a>
+                                <a class="nav-link text-light" asp-controller="Department" asp-action="Index">Departments</a>
                             </li>
-                            if (User.IsInRole("HR"))
+                            @if (User.IsInRole("HR"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Salary" asp-action="Index">Salary</a>
+                                    <a class="nav-link text-light" asp-controller="Salary" asp-action="Index">Salary</a>
                                 </li>
                             }
                         }
@@ -50,43 +47,44 @@
                             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                             int id = employeeService.getEmpId(userId);
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Employee" asp-action="Details" asp-route-id="@id">Personal Details</a>
+                                <a class="nav-link text-light" asp-controller="Employee" asp-action="Details" asp-route-id="@id">Personal Details</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Bank" asp-action="Create">Add Bank Details</a>
+                                <a class="nav-link text-light" asp-controller="Bank" asp-action="Create">Bank Details</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Salary" asp-action="Details" asp-route-id="@id">Salary Details</a>
+                                <a class="nav-link text-light" asp-controller="Salary" asp-action="Details" asp-route-id="@id">Salary</a>
                             </li>
                         }
                     </ul>
-                    <partial name="_LoginPartial">
+                    @if (User.IsInRole("Employee"))
+                    {
+                        string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        int empId = employeeService.getEmpId(userid);
+                        var attendance = await attendanceService.getLatest(empId);
+                        <partial name="_PunchInOut" model="attendance" />
+                    }
+                    <partial name="_LoginPartial" />
+                  
                 </div>
             </div>
         </nav>
     </header>
 
- 
-     @if(User.IsInRole("Employee")){ 
-      string userid = User.FindFirstValue(ClaimTypes.NameIdentifier); 
-       int empId = employeeService.getEmpId(userid); 
-       var attendance =await attendanceService.getLatest(empId); 
-       <partial name="_PunchInOut" model="attendance" /> 
-   
-      
-    }
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container mt-4">
+       
+        <main role="main" class="py-4">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="bg-light text-center py-3 mt-5 shadow-sm">
         <div class="container">
-            &copy; 2025 - PayrollManagement - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Payroll Management - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+ 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

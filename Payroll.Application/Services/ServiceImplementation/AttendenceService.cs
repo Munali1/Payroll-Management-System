@@ -42,6 +42,31 @@ namespace Payroll.Application.Services.ServiceImplementation
             return attendence;
         }
 
+        public async Task<TimeSpan> getTotalWorkingHours(int EmpId)
+        {
+            var attendanceRecords = await unitOfWork.attendanceRepository
+       .GetAllAsync(x => x.EmployeeId == EmpId && x.inTime.HasValue && x.outTime.HasValue);
+
+            var todaysRecords = attendanceRecords
+                .Where(x => x.inTime.Value.Date == DateTime.Today)
+                .ToList();
+            foreach (var record in todaysRecords)
+            {
+                if (record.inTime.HasValue && record.outTime.HasValue)
+                {
+                    record.workingHours = record.outTime.Value - record.inTime.Value;
+                }
+            }
+
+            var totalWorkingMinutesToday = todaysRecords
+                .Where(x => x.workingHours.HasValue)
+                .Sum(x => x.workingHours.GetValueOrDefault().TotalMinutes);
+
+            var totalWorkingHoursToday = TimeSpan.FromMinutes(totalWorkingMinutesToday);
+
+            return totalWorkingHoursToday;
+        }
+
         public async Task<string> GetWorkingHoursAsync(int id)
         {
             var attendance = await unitOfWork.attendanceRepository.GetAsync(x => x.AttendenceId == id, "Employee");
@@ -84,7 +109,7 @@ namespace Payroll.Application.Services.ServiceImplementation
             }
             attendance.outTime = DateTime.Now;
             TimeSpan workedDuration = attendance.outTime.Value - attendance.inTime.Value;
-            attendance.workingHours = new DateTime().Add(workedDuration);
+            attendance.workingHours = workedDuration;
 
             await Update(attendance);
         }

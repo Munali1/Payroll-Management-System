@@ -1,49 +1,50 @@
 ﻿@using Payroll.Application.Services.ServiceInterface
 @using System.Security.Claims
-@inject IAttendenceService attendenceService
+
 @inject IEmployeeService employeeService
+@inject IAttendenceService attendenceService 
 @model Payroll.Domain.Entities.Attendence
-@if(User.IsInRole("Employee")){
-    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    int id = employeeService.getEmpId(userId);
-    <div class="punch-container">
-      
+
+<ul class="navbar-nav">
+    @if (User.IsInRole("Employee"))
+    {
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        int id = employeeService.getEmpId(userId);
+
+        <li class="nav-item">
             @if (Model == null || Model.inTime == null)
             {
-                <form asp-controller="Attendance" asp-action="PunchIn" asp-route-id="id" method="post">
+                <form asp-controller="Attendance" asp-action="PunchIn" asp-route-id="@id" method="post">
                     <button type="submit" class="btn btn-success">Punch In</button>
                 </form>
             }
             else if (Model.outTime == null)
             {
-                <form asp-controller="Attendance" asp-action="PunchOut" asp-route-id="id" method="post">
-                    <button type="submit" class="btn btn-danger">Punch Out</button>
+                <form asp-controller="Attendance" asp-action="PunchOut" asp-route-id="@id" method="post">
+                    <button id="PunchOut" type="submit" class="btn btn-danger" onclick="showTotalWorkingHours(@id)">Punch Out</button>
                 </form>
             }
-        
+        </li>
+    }
+</ul>
+<script>
+
+    function showTotalWorkingHours(empId) {
       
-       
-        <span class="punch-info">
-            Last In: @(Model?.inTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not punched in")
-            | Last Out: @(Model?.outTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not punched out")
-        </span>
-    </div>
-
-    <style>
-        .punch-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .punch-info {
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
-
-}
+        $.ajax({
+            url: '/Attendance/getTotalWorkingHours', 
+            type: 'GET',
+            data: { empId: empId },
+            success: function (data) {
+                if (data.hours !== undefined && data.minutes !== undefined) {
+                    alert(`You have worked for: ${data.hours} hours and ${data.minutes} minutes.`);
+                } else {
+                    alert('Error fetching total working hours.');
+                }
+            },
+            error: function () {
+                alert('An error occurred while fetching total working hours.');
+            }
+        });
+    }
+</script>

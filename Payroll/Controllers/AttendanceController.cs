@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Payroll.Application.Services.ServiceImplementation;
 using Payroll.Application.Services.ServiceInterface;
 using System.Security.Claims;
 
@@ -46,7 +48,14 @@ namespace Payroll.Web.Controllers
             await attendenceService.PunchOut(id);
             return Redirect(Request.Headers["Referer"].ToString());
         }
-
+        [HttpGet]
+        public async Task<IActionResult> getTotalWorkingHours(int EmpId)
+        {
+            var totalWorkingHours = await attendenceService.getTotalWorkingHours(EmpId);
+            var hours = totalWorkingHours.Hours;
+            var minutes = totalWorkingHours.Minutes;
+            return Json(new { hours, minutes });
+        }
 
 
 

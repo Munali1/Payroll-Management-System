@@ -16,7 +16,7 @@ namespace Payroll.Domain.Entities
         public int EmployeeId { get; set; }
         public DateTime? inTime { get; set; }
         public DateTime? outTime { get; set; }
-        public DateTime? workingHours { get; set; }
+        public TimeSpan? workingHours { get; set; }
 
         [ForeignKey("EmployeeId")]
         public virtual Employee? Employee { get; set; }

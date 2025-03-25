@@ -16,7 +16,8 @@ namespace Payroll.Application.Services.ServiceInterface
         Task PunchOut(int employeeId);
 
         Task<Attendence> getLatest(int id);
-       
+
+        Task<TimeSpan> getTotalWorkingHours(int EmpId);
 
     }
 }

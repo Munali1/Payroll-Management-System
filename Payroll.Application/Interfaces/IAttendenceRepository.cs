@@ -8,5 +8,8 @@ namespace Payroll.Application.Interfaces
         void Update(Attendence attendence);
         Task<Attendence> GetLastestAttendenceEmployee(int Empid);
         Task<List<Attendence>> getAll();
+
+       
+        
     }
 }
