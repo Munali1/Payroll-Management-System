@@ -7,18 +7,22 @@
     string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     int id = employeeService.getEmpId(userId);
     <div class="punch-container">
-        @if (Model == null || Model.inTime == null)
-        {
-            <form asp-controller="Attendance" asp-action="PunchIn" asp-route-id="id" method="post">
-                <button type="submit" class="btn btn-success">Punch In</button>
-            </form>
-        }
-        else if (Model.outTime == null)
-        {
-            <form asp-controller="Attendance" asp-action="PunchOut" asp-route-id="id" method="post">
-                <button type="submit" class="btn btn-danger">Punch Out</button>
-            </form>
-        }
+      
+            @if (Model == null || Model.inTime == null)
+            {
+                <form asp-controller="Attendance" asp-action="PunchIn" asp-route-id="id" method="post">
+                    <button type="submit" class="btn btn-success">Punch In</button>
+                </form>
+            }
+            else if (Model.outTime == null)
+            {
+                <form asp-controller="Attendance" asp-action="PunchOut" asp-route-id="id" method="post">
+                    <button type="submit" class="btn btn-danger">Punch Out</button>
+                </form>
+            }
+        
+      
+       
         <span class="punch-info">
             Last In: @(Model?.inTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not punched in")
             | Last Out: @(Model?.outTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Not punched out")

@@ -38,7 +38,8 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index">Department</a>
                             </li>
-                            if(User.IsInRole("HR")){
+                            if (User.IsInRole("HR"))
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Salary" asp-action="Index">Salary</a>
                                 </li>

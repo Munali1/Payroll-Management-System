@@ -21,7 +21,18 @@ namespace Payroll.Infrastructure.Repository
 
         public async Task<Attendence> GetLastestAttendenceEmployee(int Empid)
         {
-           return await context.Attendences.Where(a => a.EmployeeId == Empid).OrderByDescending(a => a.inTime).FirstOrDefaultAsync();
+           
+          var oldAttendance= await context.Attendences.Where(a => a.EmployeeId == Empid).OrderByDescending(a => a.inTime).FirstOrDefaultAsync();
+            if (oldAttendance== null)
+            {
+                return new Attendence();
+            }
+            if (oldAttendance?.inTime != null && oldAttendance?.outTime != null)
+            {
+                return new Attendence();
+            }
+            return oldAttendance;
+                
         }
 
         public void Update(Attendence attendence)
