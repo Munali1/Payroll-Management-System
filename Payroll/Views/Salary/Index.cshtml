@@ -1,52 +1,101 @@
-﻿
+﻿@using Newtonsoft.Json
 @model IEnumerable<Payroll.Domain.Entities.Salary>
 
 @{
     ViewData["Title"] = "Salary List";
 }
 
-<div class="container">
-    <div class="row">
-        <h2 class="text-center">@ViewData["Title"]</h2>
-        <div class="col-md-4">
-            <a asp-action="Create" class="btn btn-primary mb-3">Add Salary</a>
-        </div>
-        
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Employee Name</th>
-                    <th>Salary Amount</th>
-                    <th>Bonus</th>
-                    <th>Total Salary</th>
-                    <th>Payment Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int counter = 1;
-                }
-                @foreach (var salary in Model)
-                {
-                    <tr>
-                        <td>@counter</td>
-                        <td>@($"{salary.Employee.ApplicationUser.FirstName} {salary.Employee.ApplicationUser.LastName}")</td>
-                        <td>@salary.SalaryAmount</td>
-                        <td>@salary.Bonus%</td>
-                        <td>@salary.TotalSalary</td>
-                        <td>@salary.PaymentDate.ToString("yyyy-MM-dd")</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@salary.Id" class="btn btn-outline-secondary">Edit</a>
-                            <a asp-action="Details" asp-route-id="@salary.Id" class="btn btn-info">Details</a>
-                            <a asp-action="Delete" asp-route-id="@salary.Id" class="btn btn-danger"
-                               onclick="return confirm('Are you sure you want to delete this salary record?')">Delete</a>
-                        </td>
-                    </tr>
-                    counter++;
-                }
-            </tbody>
-        </table>
+
+
+<div class="container mt-4">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+
+    <div class="mb-3">
+        <a asp-action="Create" class="btn btn-primary">Add Salary</a>
     </div>
+
+    <div id="gridContainer"></div>
+    <script>
+        var salaryData = @Html.Raw(JsonConvert.SerializeObject(Model.Select(s => new
+            {
+                Id = s.Id,
+                EmployeeName = s.Employee != null ? s.Employee.ApplicationUser.FirstName + " " + s.Employee.ApplicationUser.LastName : "N/A",
+                SalaryAmount = s.SalaryAmount,
+                Bonus = s.Bonus, 
+                TotalSalary = s.TotalSalary,
+                PaymentDate = s.PaymentDate.ToString("yyyy-MM-dd")
+            })));
+
+        $(function () {
+            $("#gridContainer").dxDataGrid({
+                dataSource: salaryData,
+                keyExpr: "Id",
+                columnAutoWidth: true,
+                showBorders: true,
+                filterRow: { visible: true },
+                searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                export: {
+                    enabled: true,
+                    fileName: "Salary_List",
+                    allowExportSelectedData: true
+                },
+                toolbar: {
+                    items: [
+                        {
+                            widget: "dxButton",
+                            options: {
+                                icon: "exportxlsx",
+                                text: "Export to Excel",
+                                onClick: function(e) {
+                                    $("#gridContainer").dxDataGrid("instance").exportToExcel(false);
+                                }
+                            }
+                        }
+                    ]
+                },
+                columns: [
+                    { caption: "No", dataField: "Id", width: 50 },
+                    { caption: "Employee Name", dataField: "EmployeeName" },
+                    { caption: "Salary Amount", dataField: "SalaryAmount", format: { type: "currency" } },
+                    {
+                        caption: "Bonus (%)",
+                        dataField: "Bonus",
+                        dataType: "number",
+                        customizeText: function(cellInfo) {
+                            return cellInfo.value + " %";
+                        }
+                    },
+                    { caption: "Total Salary", dataField: "TotalSalary", format: { type: "currency" } },
+                    { caption: "Payment Date", dataField: "PaymentDate", dataType: "date", format: "yyyy-MM-dd" },
+                    {
+                        caption: "Actions",
+                        cellTemplate: function (container, options) {
+                            var id = options.data.Id;
+                            $("<a>")
+                                .addClass("btn btn-outline-secondary btn-sm me-1")
+                                .attr("href", "/Salary/Edit/" + id)
+                                .text("Edit")
+                                .appendTo(container);
+
+                            $("<a>")
+                                .addClass("btn btn-info btn-sm me-1")
+                                .attr("href", "/Salary/Details/" + id)
+                                .text("Details")
+                                .appendTo(container);
+
+                            $("<a>")
+                                .addClass("btn btn-danger btn-sm")
+                                .attr("href", "/Salary/Delete/" + id)
+                                .text("Delete")
+                                .on("click", function () {
+                                    return confirm("Are you sure you want to delete this salary record?");
+                                })
+                                .appendTo(container);
+                        },
+                        width: 200
+                    }
+                ]
+            });
+        });
+    </script>
 </div>
