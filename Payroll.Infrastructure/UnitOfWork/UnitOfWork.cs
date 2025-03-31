@@ -21,8 +21,6 @@ namespace Payroll.Infrastructure.UnitOfWork
 
         public ISalaryRepository salaryRepository { get; private set; }
 
-      
-
         public IAttendenceRepository attendanceRepository { get;private set; }
         public UnitOfWork(AppDbContext context)
         {

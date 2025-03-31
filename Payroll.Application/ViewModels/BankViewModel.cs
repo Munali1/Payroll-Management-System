@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace Payroll.Application.ViewModels
 {
-    public class EmployeeViewModel
+   public class BankViewModel
     {
-        public string UserId { get; set; }
-      
-        public int? DepartmentId { get; set; }
-     
-        public string? Designation { get; set; }
-        public string? EmployeeImage { get; set; }
+        public int? EmployeeId { get; set; }
+        public string? BankName { get; set; }
+        public string? AccountNumber { get; set; }
+        public string? AccountHolderName { get; set; }
     }
 }

@@ -28,22 +28,30 @@
     }
 </ul>
 <script>
-
     function showTotalWorkingHours(empId) {
-      
         $.ajax({
-            url: '/Attendance/getTotalWorkingHours', 
+            url: '/Attendance/getTotalWorkingHours',
             type: 'GET',
             data: { empId: empId },
             success: function (data) {
                 if (data.hours !== undefined && data.minutes !== undefined) {
-                    alert(`You have worked for: ${data.hours} hours and ${data.minutes} minutes.`);
+                    $.notify(`You have worked for: ${data.hours} hours and ${data.minutes} minutes.`, {
+                        className: "info",
+                        position: "top center",
+                        autoHideDelay: 5000 
+                    });
                 } else {
-                    alert('Error fetching total working hours.');
+                    $.notify('Error fetching total working hours.', {
+                        className: "error",
+                        position: "top center"
+                    });
                 }
             },
             error: function () {
-                alert('An error occurred while fetching total working hours.');
+                $.notify('An error occurred while fetching total working hours.', {
+                    className: "error",
+                    position: "top center"
+                });
             }
         });
     }

@@ -9,7 +9,7 @@
 
 <div class="container mt-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
-
+    
     <div class="mb-3">
         <a asp-action="Create" class="btn btn-primary">Add Salary</a>
     </div>
@@ -47,7 +47,7 @@
                                 icon: "exportxlsx",
                                 text: "Export to Excel",
                                 onClick: function(e) {
-                                    $("#gridContainer").dxDataGrid("instance").exportToExcel(false);
+                                    $("#gridContainer").dxDataGrid("instance").exportToExcel(true);
                                 }
                             }
                         }
