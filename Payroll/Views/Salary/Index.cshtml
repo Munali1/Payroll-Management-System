@@ -5,25 +5,27 @@
     ViewData["Title"] = "Salary List";
 }
 
-
-
 <div class="container mt-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
-    
+
     <div class="mb-3">
         <a asp-action="Create" class="btn btn-primary">Add Salary</a>
     </div>
 
     <div id="gridContainer"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <script>
         var salaryData = @Html.Raw(JsonConvert.SerializeObject(Model.Select(s => new
             {
                 Id = s.Id,
                 EmployeeName = s.Employee != null ? s.Employee.ApplicationUser.FirstName + " " + s.Employee.ApplicationUser.LastName : "N/A",
                 SalaryAmount = s.SalaryAmount,
-                Bonus = s.Bonus, 
+                Bonus = s.Bonus,
                 TotalSalary = s.TotalSalary,
-                PaymentDate = s.PaymentDate.ToString("yyyy-MM-dd")
+                PaymentDate = s.PaymentDate.ToString("yyyy-MM-dd") ?? ""  
             })));
 
         $(function () {
@@ -39,6 +41,22 @@
                     fileName: "Salary_List",
                     allowExportSelectedData: true
                 },
+                onExporting: function(e) {
+                    var workbook = new ExcelJS.Workbook();
+                    var worksheet = workbook.addWorksheet("Salary List");
+
+                    DevExpress.excelExporter.exportDataGrid({
+                        component: e.component,
+                        worksheet: worksheet,
+                        autoFilterEnabled: true
+                    }).then(() => {
+                        workbook.xlsx.writeBuffer().then((buffer) => {
+                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Salary_List.xlsx");
+                        });
+                    });
+
+                    e.cancel = true;
+                },
                 toolbar: {
                     items: [
                         {
@@ -46,8 +64,20 @@
                             options: {
                                 icon: "exportxlsx",
                                 text: "Export to Excel",
-                                onClick: function(e) {
-                                    $("#gridContainer").dxDataGrid("instance").exportToExcel(true);
+                                onClick: function() {
+                                    var dataGrid = $("#gridContainer").dxDataGrid("instance");
+                                    var workbook = new ExcelJS.Workbook();
+                                    var worksheet = workbook.addWorksheet("Salary List");
+
+                                    DevExpress.excelExporter.exportDataGrid({
+                                        component: dataGrid,
+                                        worksheet: worksheet,
+                                        autoFilterEnabled: true
+                                    }).then(() => {
+                                        workbook.xlsx.writeBuffer().then((buffer) => {
+                                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Salary_List.xlsx");
+                                        });
+                                    });
                                 }
                             }
                         }

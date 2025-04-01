@@ -17,7 +17,12 @@
     </div>
 }
 else{
-
-
+    @if (User.IsInRole("Admin") || User.IsInRole("HR"))
+    {
+        <partial name="_AdminHrPartial" />
+    }
+    else{
+        <partial name="_EmployeePartial" />
+    }
 }
 

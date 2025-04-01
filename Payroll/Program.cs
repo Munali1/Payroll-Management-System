@@ -27,7 +27,7 @@ builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<IEmailServiceInterface, EmailService>();
 builder.Services.AddScoped<IAttendenceService, AttendenceService>();
 
-
+builder.Services.AddAutoMapper(typeof(Program));
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

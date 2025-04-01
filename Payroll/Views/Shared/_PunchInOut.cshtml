@@ -4,12 +4,13 @@
 @inject IEmployeeService employeeService
 @inject IAttendenceService attendenceService 
 @model Payroll.Domain.Entities.Attendence
-
+@{
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int id = employeeService.getEmpId(userId);
+}
 <ul class="navbar-nav">
     @if (User.IsInRole("Employee"))
     {
-        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        int id = employeeService.getEmpId(userId);
 
         <li class="nav-item">
             @if (Model == null || Model.inTime == null)
@@ -20,14 +21,19 @@
             }
             else if (Model.outTime == null)
             {
-                <form asp-controller="Attendance" asp-action="PunchOut" asp-route-id="@id" method="post">
-                    <button id="PunchOut" type="submit" class="btn btn-danger" onclick="showTotalWorkingHours(@id)">Punch Out</button>
+                <form id="punchOutForm" asp-controller="Attendance" asp-action="PunchOut" asp-route-id="@id" method="post">
+                    <button id="PunchOut" type="submit" class="btn btn-danger">Punch Out</button>
                 </form>
             }
         </li>
     }
 </ul>
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let punchOutForm = document.getElementById("punchOutForm");
+        punchOutForm.submit();
+    }
+
     function showTotalWorkingHours(empId) {
         $.ajax({
             url: '/Attendance/getTotalWorkingHours',
@@ -38,7 +44,7 @@
                     $.notify(`You have worked for: ${data.hours} hours and ${data.minutes} minutes.`, {
                         className: "info",
                         position: "top center",
-                        autoHideDelay: 5000 
+                        autoHideDelay: 5000
                     });
                 } else {
                     $.notify('Error fetching total working hours.', {

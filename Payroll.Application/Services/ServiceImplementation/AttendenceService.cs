@@ -30,10 +30,9 @@ namespace Payroll.Application.Services.ServiceImplementation
         {
             return await unitOfWork.attendanceRepository.getAll();
         }
-
         public async Task<Attendence> getIndividualAttendence(int id)
         {
-           return await unitOfWork.attendanceRepository.GetAsync(x=>x.AttendenceId==id,"Employee");
+           return await unitOfWork.attendanceRepository.GetAsync(x=>x.EmployeeId==id,"Employee,ApplicationUser");
         }
 
         public async Task<Attendence> getLatest(int id)
@@ -110,7 +109,6 @@ namespace Payroll.Application.Services.ServiceImplementation
             attendance.outTime = DateTime.Now;
             TimeSpan workedDuration = attendance.outTime.Value - attendance.inTime.Value;
             attendance.workingHours = workedDuration;
-
             await Update(attendance);
         }
 

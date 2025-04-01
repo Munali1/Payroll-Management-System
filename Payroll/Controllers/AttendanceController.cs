@@ -21,7 +21,8 @@ namespace Payroll.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var AttendanceList = await attendenceService.getAttendenceList();
-            return View(AttendanceList);
+            var TodayList = AttendanceList.Where(a => a.inTime.Value.Date == DateTime.Today).ToList();
+            return View(TodayList);
         }
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> GetPunchInOutStatus(int employeeId)

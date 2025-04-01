@@ -1,0 +1,53 @@
+﻿<div class="container mt-3">
+    <div class="row">
+        @inject IEmployeeService employeeService
+        @using System.Security.Claims
+@using Payroll.Application.Services.ServiceInterface
+
+        @{
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int empId = employeeService.getEmpId(userId);
+        }
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <i class="bi bi-person-circle display-4 text-primary"></i>
+                    <h5 class="card-title">Personal Details</h5>
+                    <a asp-controller="Employee" asp-action="Details" asp-route-id="@empId" class="btn btn-primary">View</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <i class="bi bi-bank display-4 text-success"></i>
+                    <h5 class="card-title">Bank Details</h5>
+                    <a asp-controller="Bank" asp-action="Create" class="btn btn-success">Update</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <i class="bi bi-cash display-4 text-warning"></i>
+                    <h5 class="card-title">Salary Details</h5>
+                    <a asp-controller="Salary" asp-action="Details" asp-route-id="@empId" class="btn btn-warning">View</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check display-4 text-info"></i>
+                    <h5 class="card-title">Attendance</h5>
+                    <a asp-controller="Attendence" asp-action="Details" asp-route-id="@empId" class="btn btn-info">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

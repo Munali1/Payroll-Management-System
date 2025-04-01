@@ -17,6 +17,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn3.devexpress.com/jslib/24.2.3/js/dx.all.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
 
 </head>
 <body>
@@ -57,6 +60,10 @@
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-controller="Salary" asp-action="Details" asp-route-id="@id">Salary</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Attendence" asp-action="Details" asp-route-id="@id">Attencence</a>
+                            </li>
+
                         }
                     </ul>
                     @if (User.IsInRole("Employee"))

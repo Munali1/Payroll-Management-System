@@ -9,11 +9,11 @@ namespace Payroll.Application.Mapper
     {
         public MapperProfile()
         {
-            CreateMap<Attendence, AttendenceViewModel>();
-            CreateMap<BankDetails, BankViewModel>();
-            CreateMap<Department, DepartmentViewModel>();
-            CreateMap<Employee, EmployeeViewModel>();
-            CreateMap<Salary, SalaryViewModel>();
+            CreateMap<Attendence, AttendenceViewModel>().ReverseMap();
+            CreateMap<BankDetails, BankViewModel>().ReverseMap();
+            CreateMap<Department, DepartmentViewModel>().ReverseMap();
+            CreateMap<Employee, EmployeeViewModel>().ReverseMap();
+            CreateMap<Salary, SalaryViewModel>().ReverseMap ();
         }
     }
 }
