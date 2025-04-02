@@ -35,7 +35,7 @@ namespace Payroll.Infrastructure.Repository
                 
         }
 
-        public void Update(Attendence attendence)
+        public async Task Update(Attendence attendence)
         {
             context.Attendences.Update(attendence);
         }

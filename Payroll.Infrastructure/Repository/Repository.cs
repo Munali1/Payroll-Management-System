@@ -51,7 +51,7 @@ namespace Payroll.Infrastructure.Repository
             {
                 foreach (var includeprop in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeprop);
+                    query = query.Include(includeprop.Trim());
                 }
             }
             return await query.AsNoTracking().ToListAsync();

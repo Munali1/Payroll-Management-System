@@ -30,9 +30,9 @@ namespace Payroll.Application.Services.ServiceImplementation
         {
             return await unitOfWork.attendanceRepository.getAll();
         }
-        public async Task<Attendence> getIndividualAttendence(int id)
+        public async Task<List<Attendence>> getIndividualAttendence(int id)
         {
-           return await unitOfWork.attendanceRepository.GetAsync(x=>x.EmployeeId==id,"Employee,ApplicationUser");
+           return await unitOfWork.attendanceRepository.GetAllAsync(x=>x.EmployeeId==id);
         }
 
         public async Task<Attendence> getLatest(int id)

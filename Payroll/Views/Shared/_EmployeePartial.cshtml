@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <i class="bi bi-bank display-4 text-success"></i>
                     <h5 class="card-title">Bank Details</h5>
-                    <a asp-controller="Bank" asp-action="Create" class="btn btn-success">Update</a>
+                    <a asp-controller="Bank" asp-action="Details" asp-route-id="@empId" class="btn btn-success">Update</a>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
                 <div class="card-body">
                     <i class="bi bi-calendar-check display-4 text-info"></i>
                     <h5 class="card-title">Attendance</h5>
-                    <a asp-controller="Attendence" asp-action="Details" asp-route-id="@empId" class="btn btn-info">View</a>
+                    <a asp-controller="Attendance" asp-action="Details" asp-route-id="@empId" class="btn btn-info">View</a>
                 </div>
             </div>
         </div>

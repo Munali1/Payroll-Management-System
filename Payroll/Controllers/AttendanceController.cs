@@ -17,7 +17,7 @@ namespace Payroll.Web.Controllers
             this.attendenceService = attendenceService;
             this.employeeService = employeeService;
         }
-        [Authorize(Roles ="HR")]
+        [Authorize(Roles ="HR,Admin")]
         public async Task<IActionResult> Index()
         {
             var AttendanceList = await attendenceService.getAttendenceList();
@@ -56,6 +56,11 @@ namespace Payroll.Web.Controllers
             var hours = totalWorkingHours.Hours;
             var minutes = totalWorkingHours.Minutes;
             return Json(new { hours, minutes });
+        }
+        public async Task<IActionResult> Details(int id)
+        {
+            var EmpAttendence=await attendenceService.getIndividualAttendence(id);
+            return View(EmpAttendence);
         }
 
 

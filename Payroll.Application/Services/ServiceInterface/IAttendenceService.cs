@@ -10,7 +10,7 @@ namespace Payroll.Application.Services.ServiceInterface
         Task Update(Attendence attendence);
         Task Delete(int id);
         Task<List<Attendence>> getAttendenceList();
-        Task<Attendence> getIndividualAttendence(int id);
+        Task<List<Attendence>> getIndividualAttendence(int id);
         Task<string> GetWorkingHoursAsync(int id);
         Task PunchIn(int employeeId);
         Task PunchOut(int employeeId);

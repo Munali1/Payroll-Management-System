@@ -18,7 +18,7 @@
                 inTime = s.inTime,
                 outTime = s.outTime,
                 workingHours = s.workingHours,
-                EmployeeName = s.Employee != null ? s.Employee.ApplicationUser.FirstName + " " + s.Employee.ApplicationUser.LastName : "N/A"
+              
             })));
 
             $("#gridContainer").dxDataGrid({
@@ -74,7 +74,7 @@
                 },
                 columns: [
                     { caption: "ID", dataField: "Id", width: 50 },
-                    { caption: "Employee Name", dataField: "EmployeeName" },
+
                     { caption: "In Time", dataField: "inTime", dataType: "datetime" },
                     { caption: "Out Time", dataField: "outTime", dataType: "datetime" },
                     { caption: "Working Hours", dataField: "workingHours", dataType: "number" }

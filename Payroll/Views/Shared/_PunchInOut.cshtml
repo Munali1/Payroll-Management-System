@@ -2,7 +2,7 @@
 @using System.Security.Claims
 
 @inject IEmployeeService employeeService
-@inject IAttendenceService attendenceService 
+@inject IAttendenceService attendenceService
 @model Payroll.Domain.Entities.Attendence
 @{
     string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -21,7 +21,7 @@
             }
             else if (Model.outTime == null)
             {
-                <form id="punchOutForm" asp-controller="Attendance" asp-action="PunchOut" asp-route-id="@id" method="post">
+                <form id="punchOutForm" asp-controller="Attendance" asp-action="PunchOut" asp-route-id="@id" method="post" onsubmit="showTotalWorkingHours(@id)">
                     <button id="PunchOut" type="submit" class="btn btn-danger">Punch Out</button>
                 </form>
             }
@@ -29,11 +29,6 @@
     }
 </ul>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let punchOutForm = document.getElementById("punchOutForm");
-        punchOutForm.submit();
-    }
-
     function showTotalWorkingHours(empId) {
         $.ajax({
             url: '/Attendance/getTotalWorkingHours',
