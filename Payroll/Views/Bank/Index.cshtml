@@ -1,44 +1,121 @@
-﻿@model IEnumerable<Payroll.Domain.Entities.BankDetails>
+﻿@using Newtonsoft.Json
+@model IEnumerable<Payroll.Domain.Entities.BankDetails>
+
 @{
     ViewData["Title"] = "Bank List";
 }
 
-<div class="container">
-    <div class="row">
-        <h2 class="text-center">
-            @ViewData["Title"]
-        </h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Bank Name</th>
-                    <th>Account Number</th>
-                    <th>Employee Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int counter = 1;
-                }
-                @foreach (var bank in Model)
-                {
-                    <tr>
-                        <td>@counter</td>
-                        <td>@bank.BankName</td>
-                        <td>@bank.AccountNumber</td>
-                        <td>@bank.AccountHolderName</td>
-                        <td>
-                            <a asp-controller="Bank" asp-action="Edit" asp-route-id="@bank.Id" class="btn btn-outline-secondary">Edit</a>
-                            <a asp-controller="Bank" asp-action="Delete" asp-route-id="@bank.Id" class="btn btn-danger"
-                               onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
-                        </td>
-                    </tr>
-                    counter++;
-       
-                }
-            </tbody>
-        </table>
-    </div>
+<div class="container mt-4">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+
+    <div id="gridContainer"></div>
+
+    <script>
+        var bankData = @Html.Raw(JsonConvert.SerializeObject(Model.Select((bank, index) => new
+            {
+                No = index + 1,
+                Id = bank.Id,
+                BankName = bank.BankName,
+                AccountNumber = bank.AccountNumber,
+                AccountHolderName = bank.AccountHolderName
+            })));
+
+        $(function () {
+            $("#gridContainer").dxDataGrid({
+                dataSource: bankData,
+                keyExpr: "Id",
+                columnAutoWidth: true,
+                showBorders: true,
+                filterRow: { visible: true },
+                searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                export: {
+                    enabled: true,
+                    fileName: "Bank_List",
+                    allowExportSelectedData: true
+                },
+                paging: {
+                    pageSize: 10
+                },
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [5, 10, 20],
+                    showInfo: true
+                },
+                onExporting: function(e) {
+                    var workbook = new ExcelJS.Workbook();
+                    var worksheet = workbook.addWorksheet("Bank List");
+
+                    DevExpress.excelExporter.exportDataGrid({
+                        component: e.component,
+                        worksheet: worksheet,
+                        autoFilterEnabled: true
+                    }).then(() => {
+                        workbook.xlsx.writeBuffer().then((buffer) => {
+                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Bank_List.xlsx");
+                        });
+                    });
+
+                    e.cancel = true;
+                },
+                toolbar: {
+                    items: [
+                        {
+                            widget: "dxButton",
+                            options: {
+                                icon: "exportxlsx",
+                                text: "Export to Excel",
+                                onClick: function() {
+                                    var dataGrid = $("#gridContainer").dxDataGrid("instance");
+                                    var workbook = new ExcelJS.Workbook();
+                                    var worksheet = workbook.addWorksheet("Bank List");
+
+                                    DevExpress.excelExporter.exportDataGrid({
+                                        component: dataGrid,
+                                        worksheet: worksheet,
+                                        autoFilterEnabled: true
+                                    }).then(() => {
+                                        workbook.xlsx.writeBuffer().then((buffer) => {
+                                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Bank_List.xlsx");
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    ]
+                },
+                columns: [
+                    { caption: "No", dataField: "No", width: 50 },
+                    { caption: "Bank Name", dataField: "BankName" },
+                    { caption: "Account Number", dataField: "AccountNumber" },
+                    { caption: "Employee Name", dataField: "AccountHolderName" },
+                    {
+                        caption: "Actions",
+                        width: 200,
+                        cellTemplate: function(container, options) {
+                            var id = options.data.Id;
+
+                            var btnContainer = $("<div>").addClass("d-flex gap-2");
+
+                            $("<a>")
+                                .addClass("btn btn-outline-secondary btn-sm")
+                                .attr("href", "/Bank/Edit/" + id)
+                                .text("Edit")
+                                .appendTo(btnContainer);
+
+                            $("<a>")
+                                .addClass("btn btn-danger btn-sm")
+                                .attr("href", "/Bank/Delete/" + id)
+                                .text("Delete")
+                                .on("click", function() {
+                                    return confirm("Are you sure you want to delete this record?");
+                                })
+                                .appendTo(btnContainer);
+
+                            btnContainer.appendTo(container);
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
 </div>

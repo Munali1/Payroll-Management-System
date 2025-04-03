@@ -26,8 +26,19 @@ namespace Payroll.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var user = await userManager.GetUserAsync(User);
-            var bankDetails = await bankDetailsService.GetById(id);
-            bankDetails.AccountHolderName = user.FirstName + user.LastName;
+            if (user == null)
+            {
+                return NotFound("User not found. Please log in.");
+            }
+
+            var bankDetails = await bankDetailsService.GetEmployeeBankDetails(id);
+            if (bankDetails == null)
+            {
+                return NotFound($"No bank details found for ID {id}.");
+            }
+
+            bankDetails.AccountHolderName = (user.FirstName ?? "") + " " + (user.LastName ?? "");
+
             return View(bankDetails);
         }
         [Authorize(Roles ="Employee")]
@@ -45,7 +56,7 @@ namespace Payroll.Web.Controllers
             if (ModelState.IsValid)
             { 
                 await bankDetailsService.Create(bankDetails);
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Home");
             }
             return View(bankDetails);
         }
@@ -69,7 +80,7 @@ namespace Payroll.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     await bankDetailsService.Update(bankDetails);
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index","Home");
                 }
             }
             return View(bankDetails);   

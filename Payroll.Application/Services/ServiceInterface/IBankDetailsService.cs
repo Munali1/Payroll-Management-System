@@ -15,5 +15,7 @@ namespace Payroll.Application.Services.ServiceInterface
         Task<BankDetails> GetById(int id);
         Task<List<BankDetails>> GetBankList();
         Task Update(BankDetails bankDetails);
+
+        Task<BankDetails> GetEmployeeBankDetails(int id);
     }
 }

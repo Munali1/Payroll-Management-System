@@ -1,0 +1,47 @@
+﻿@inject IEmployeeService employeeService
+@inject IAttendenceService attendanceService
+@using System.Security.Claims
+@using Payroll.Application.Services.ServiceInterface
+<ul class="navbar-nav me-auto">
+    @if (User.IsInRole("Admin") || User.IsInRole("HR"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Employee" asp-action="Index">Employees</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Department" asp-action="Index">Departments</a>
+        </li>
+        @if (User.IsInRole("HR"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-light" asp-controller="Salary" asp-action="Index">Salary</a>
+            </li>
+        }
+    }
+    @if (User.IsInRole("Employee"))
+    {
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        int id = employeeService.getEmpId(userId);
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Employee" asp-action="Details" asp-route-id="@id">Personal Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Bank" asp-action="Create">Add Bank Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Salary" asp-action="Details" asp-route-id="@id">Salary Details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Attendance" asp-action="Details" asp-route-id="@id">Attendance</a>
+        </li>
+
+    }
+</ul>
+@if (User.IsInRole("Employee"))
+{
+    string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int empId = employeeService.getEmpId(userid);
+    var attendance = await attendanceService.getLatest(empId);
+    <partial name="_PunchInOut" model="attendance" />
+}
+<partial name="_LoginPartial" />

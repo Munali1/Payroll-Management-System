@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using Payroll.Application.Services.ServiceImplementation;
+
 using Payroll.Application.Services.ServiceInterface;
 using System.Security.Claims;
 

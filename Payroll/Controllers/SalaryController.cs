@@ -96,12 +96,12 @@ namespace Payroll.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int Empid)
         {
-            var sal=await salaryService.GetById(id);
+            var sal = await salaryService.getEmployeeSalaryDetails(Empid);
             if (sal == null)
             {
-                return NotFound();
+                return NotFound("The salary details has not been added yet.");
             }
             else
             {

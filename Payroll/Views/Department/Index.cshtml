@@ -38,21 +38,30 @@
                     fileName: "Department_List",
                     allowExportSelectedData: true
                 },
-                onExporting: function(e) {
-                    var workbook = new ExcelJS.Workbook();
-                    var worksheet = workbook.addWorksheet("Department List");
+                               onExporting: function(e) {
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet("Department List");
 
-                    DevExpress.excelExporter.exportDataGrid({
-                        component: e.component,
-                        worksheet: worksheet,
-                        autoFilterEnabled: true
-                    }).then(() => {
-                        workbook.xlsx.writeBuffer().then((buffer) => {
-                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Department_List.xlsx");
-                        });
-                    });
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                customizeColumns: function(columns) {
+                
+                    const index = columns.findIndex(col => col.caption === "Actions");
+                    if (index !== -1) {
+                        columns.splice(index, 1); 
+                    }
+                }
+            }).then(() => {
+                workbook.xlsx.writeBuffer().then((buffer) => {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Department_List.xlsx");
+                });
+            });
 
-                    e.cancel = true;
+            e.cancel = true; 
+    
+
                 },
                 toolbar: {
                     items: [

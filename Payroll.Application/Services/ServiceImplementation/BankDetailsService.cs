@@ -38,6 +38,11 @@ namespace Payroll.Application.Services.ServiceImplementation
             return (await unitOfWork.bankDetailsRepository.GetAsync(x => x.Id == id,"Employee"));
         }
 
+        public async Task<BankDetails> GetEmployeeBankDetails(int id)
+        {
+            return (await unitOfWork.bankDetailsRepository.GetAsync(x => x.EmployeeId == id, "Employee"));
+        }
+
         public async Task Update(BankDetails bankDetails)
         {
             unitOfWork.bankDetailsRepository.Update(bankDetails);

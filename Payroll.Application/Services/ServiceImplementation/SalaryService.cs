@@ -37,6 +37,12 @@ namespace Payroll.Application.Services.ServiceImplementation
             return sal;
         }
 
+        public async  Task<Salary> getEmployeeSalaryDetails(int id)
+        {
+            var sal = await unitOfWork.salaryRepository.GetAsync(x => x.EmployeeId == id, "Employee");
+            return sal;
+        }
+
         public async Task<List<Salary>> GetSalaryList()
         {
             return await unitOfWork.salaryRepository.GetAllAsync(null,"Employee");
