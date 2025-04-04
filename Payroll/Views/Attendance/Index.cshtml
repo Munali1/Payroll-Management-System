@@ -73,7 +73,11 @@
                     ]
                 },
                 columns: [
-                    { caption: "ID", dataField: "Id", width: 50 },
+                    {
+                       caption: "No", width: 50,
+        cellTemplate: function (container, options) {
+            container.text(options.rowIndex + 1);
+        }},
                     { caption: "Employee Name", dataField: "EmployeeName" },
                     { caption: "In Time", dataField: "inTime", dataType: "datetime" },
                     { caption: "Out Time", dataField: "outTime", dataType: "datetime" },

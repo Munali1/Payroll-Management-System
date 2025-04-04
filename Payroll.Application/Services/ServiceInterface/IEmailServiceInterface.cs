@@ -8,6 +8,6 @@ namespace Payroll.Application.Services.ServiceInterface
 {
     public interface IEmailServiceInterface
     {
-        void sendEmail(string email, string body, string subject);
+        Task sendEmail(string email, string body, string subject);
     }
 }

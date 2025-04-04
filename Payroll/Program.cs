@@ -1,9 +1,11 @@
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Payroll.Application.Interfaces;
 using Payroll.Application.Services.ServiceImplementation;
 using Payroll.Application.Services.ServiceInterface;
 using Payroll.Domain.Entities;
+using Payroll.Infrastructure.BackgroundJobs;
 using Payroll.Infrastructure.Data;
 using Payroll.Infrastructure.UnitOfWork;
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("cs"))
 );
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("cs")));
+builder.Services.AddHangfireServer();
 
+builder.Services.AddScoped<SalaryJobScheduler>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -35,7 +41,14 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+app.UseHangfireDashboard();
+app.MapHangfireDashboard(); 
 
+using (var scope = app.Services.CreateScope())
+{
+    var scheduler = scope.ServiceProvider.GetRequiredService<SalaryJobScheduler>();
+    scheduler.ScheduleMonthlyJob();
+}
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

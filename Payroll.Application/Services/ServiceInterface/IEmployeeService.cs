@@ -15,10 +15,12 @@ namespace Payroll.Application.Services.ServiceInterface
         Task<Employee> GetById(int id);
         Task<List<Employee>> GetEmployees();
         Task Update(Employee employee, IFormFile file);
-        string getName(string id);
+       string getName(string id);
         int getEmpId(string id);
-        BankDetails EmployeeBankDetails(int id);
-        Salary EmployeeSalaryDetails(int id);
+
+        string getEmpDep(int id);
+        Task<BankDetails> EmployeeBankDetails(int id);
+        Task<Salary> EmployeeSalaryDetails(int id);
 
     }
 }

@@ -14,8 +14,9 @@ namespace Payroll.Application.Services.ServiceInterface
         Task<Salary> GetById(int id);
         Task<List<Salary>> GetSalaryList();
         Task Update(Salary salary);
-
         Task<Salary> getEmployeeSalaryDetails(int id);
         IEnumerable<Salary> GetAll();
+        Task ProcessMonthlySalaries();
+        string GenerateSalarySlipHtml(Salary salary, Employee employee);
     }
 }

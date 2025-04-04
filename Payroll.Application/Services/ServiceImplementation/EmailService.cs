@@ -18,7 +18,7 @@ namespace Payroll.Application.Services.ServiceImplementation
         {
             this.configuration = configuration;
         }
-        public void sendEmail(string email, string body, string subject)
+        public async Task sendEmail(string email, string body, string subject)
         {
             var emailSettings = configuration.GetSection("EmailSettings");
 
@@ -39,7 +39,7 @@ namespace Payroll.Application.Services.ServiceImplementation
                 EnableSsl = true
             })
             {
-                smtpClient.Send(mailMessage);
+                await smtpClient.SendMailAsync(mailMessage);
             }
         }
     }

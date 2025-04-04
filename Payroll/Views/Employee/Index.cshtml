@@ -91,7 +91,11 @@
                     ]
                 },
                 columns: [
-                    { caption: "No", dataField: "No", width: 50 },
+                    {
+                       caption: "No", width: 50,
+        cellTemplate: function (container, options) {
+            container.text(options.rowIndex + 1);
+        }},
                     { caption: "Employee Name", dataField: "EmployeeName" },
                     { caption: "Email", dataField: "Email" },
                     { caption: "Department", dataField: "Department" },

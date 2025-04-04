@@ -84,7 +84,11 @@
                     ]
                 },
                 columns: [
-                    { caption: "No", dataField: "No", width: 50 },
+                    {
+                       caption: "No", width: 50,
+        cellTemplate: function (container, options) {
+            container.text(options.rowIndex + 1);
+        }},
                     { caption: "Bank Name", dataField: "BankName" },
                     { caption: "Account Number", dataField: "AccountNumber" },
                     { caption: "Employee Name", dataField: "AccountHolderName" },

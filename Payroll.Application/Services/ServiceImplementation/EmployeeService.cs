@@ -34,8 +34,6 @@ namespace Payroll.Application.Services.ServiceImplementation
             await unitOfWork.SaveAsync();
         }
 
-     
-
         public async Task Delete(int id)
         {
             var emp = await unitOfWork.empRepository.GetAsync(x => x.Id == id);
@@ -44,19 +42,24 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         }
 
-        public BankDetails EmployeeBankDetails(int id)
+        public async Task< BankDetails> EmployeeBankDetails(int id)
         {
-            return unitOfWork.empRepository.GetBankDetails(id);
+            return await unitOfWork.empRepository.GetBankDetails(id);
         }
 
-        public Salary EmployeeSalaryDetails(int id)
+        public async Task<Salary> EmployeeSalaryDetails(int id)
         {
-            return unitOfWork.empRepository.getSalaryDetails(id);
+            return await unitOfWork.empRepository.getSalaryDetails(id);
         }
 
         public async Task<Employee> GetById(int id)
         {
             return await unitOfWork.empRepository.GetAsync(x => x.Id==id,"ApplicationUser");
+        }
+
+        public string getEmpDep(int id)
+        {
+            return unitOfWork.empRepository.GetDepartmentName(id);
         }
 
         public int getEmpId(string id)
@@ -71,7 +74,7 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public string getName(string id)
         {
-            return unitOfWork.empRepository.getFullName(id);
+            return  unitOfWork.empRepository.getFullName(id);
         }
 
         public async Task Update(Employee employee, IFormFile file)
