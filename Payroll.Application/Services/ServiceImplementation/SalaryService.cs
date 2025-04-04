@@ -101,7 +101,7 @@ namespace Payroll.Application.Services.ServiceImplementation
                     <p>Employee ID: {employee.Id}</p>
                     <p>Department: {EmpDep}</p>
                     <p>Base Salary: {salary.SalaryAmount:C}</p>
-                    <p>Bonus: {salary.Bonus:C}</p>
+                    <p>Bonus: {salary.Bonus}%</p>
                     <p>Total Salary: {salary.TotalSalary:C}</p>
                     <p>Payment Date: {salary.PaymentDate.ToShortDateString()}</p>
                     <p>Thank you for your hard work!</p>

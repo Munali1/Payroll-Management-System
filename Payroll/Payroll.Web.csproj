@@ -24,8 +24,4 @@
     <ProjectReference Include="..\Payroll.Infrastructure\Payroll.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Images\" />
-  </ItemGroup>
-
 </Project>
