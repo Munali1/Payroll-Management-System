@@ -24,5 +24,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Payroll.Infrastructure\Payroll.Infrastructure.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<None Update="DinkToPdfLib\libwkhtmltox.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

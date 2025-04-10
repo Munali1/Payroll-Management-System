@@ -11,30 +11,37 @@ using Payroll.Infrastructure.BackgroundJobs;
 using Payroll.Infrastructure.Data;
 using Payroll.Infrastructure.ExternalServices;
 using Payroll.Infrastructure.UnitOfWork;
-
+using Payroll.Web.DinkToPdfLib; 
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-// Register DbContext for SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("cs"))
 );
 
-// Register Hangfire services
 builder.Services.AddHangfire(config =>
     config.UseSqlServerStorage(builder.Configuration.GetConnectionString("cs"))
 );
 builder.Services.AddHangfireServer();
 
-// Register application services
-builder.Services.AddScoped<SalaryJobScheduler>();
+
+var context = new CustomAssemblyLoadContext();
+context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "DinkToPdfLib", "libwkhtmltox.dll"));
+
+builder.Services.AddSingleton<IConverter>(provider =>
+    new SynchronizedConverter(new PdfTools())
+);
+builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
+
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
@@ -43,26 +50,24 @@ builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<IEmailServiceInterface, EmailService>();
 builder.Services.AddScoped<IAttendenceService, AttendenceService>();
 builder.Services.AddScoped<IPasswordGenerator, PasswordGenerator>();
-builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
-
-builder.Services.AddSingleton<ITools,PdfTools>(); 
-builder.Services.AddSingleton<IConverter, SynchronizedConverter>(); 
+builder.Services.AddScoped<SalaryJobScheduler>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
+
 app.UseHangfireDashboard();
 app.MapHangfireDashboard();
 
-// Execute scheduled job on startup
+
 using (var scope = app.Services.CreateScope())
 {
     var scheduler = scope.ServiceProvider.GetRequiredService<SalaryJobScheduler>();
@@ -71,6 +76,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -83,8 +89,6 @@ app.MapControllerRoute(
 await SeedRolesAndAdminUsersAsync(app);
 
 app.Run();
-
-
 async Task SeedRolesAndAdminUsersAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
