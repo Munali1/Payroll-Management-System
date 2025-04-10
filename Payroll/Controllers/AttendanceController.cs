@@ -46,7 +46,7 @@ namespace Payroll.Web.Controllers
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int id = employeeService.getEmpId(userId);
             await attendenceService.PunchOut(id);
-            return Redirect(Request.Headers["Referer"].ToString());
+            return Ok();
         }
         [HttpGet]
         public async Task<IActionResult> getTotalWorkingHours(int EmpId)

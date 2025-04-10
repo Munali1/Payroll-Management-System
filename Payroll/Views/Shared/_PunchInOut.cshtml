@@ -21,39 +21,60 @@
             }
             else if (Model.outTime == null)
             {
-                <form id="punchOutForm" asp-controller="Attendance" asp-action="PunchOut" asp-route-id="@id" method="post" onsubmit="showTotalWorkingHours(@id)">
-                    <button id="PunchOut" type="submit" class="btn btn-danger">Punch Out</button>
-                </form>
+                <button id="punchOutButton" class="btn btn-danger">Punch Out</button>
             }
         </li>
     }
 </ul>
 <script>
-    function showTotalWorkingHours(empId) {
-        $.ajax({
-            url: '/Attendance/getTotalWorkingHours',
-            type: 'GET',
-            data: { empId: empId },
-            success: function (data) {
-                if (data.hours !== undefined && data.minutes !== undefined) {
-                    $.notify(`You have worked for: ${data.hours} hours and ${data.minutes} minutes.`, {
-                        className: "info",
-                        position: "top center",
-                        autoHideDelay: 5000
+    $(document).ready(function () {
+        $('#punchOutButton').click(function (e) {
+            e.preventDefault();
+
+            const empId = @id; 
+
+            $.ajax({
+                url: '/Attendance/PunchOut',
+                type: 'POST',
+                success: function () {
+                   
+                    $.ajax({
+                        url: '/Attendance/getTotalWorkingHours',
+                        type: 'GET',
+                        data: { empId: empId },
+                        success: function (data) {
+                            if (data.hours !== undefined && data.minutes !== undefined) {
+                                $.notify(`You have worked for: ${data.hours} hours and ${data.minutes} minutes.`, {
+                                    className: "info",
+                                    position: "top center",
+                                    autoHideDelay: 5000
+                                });
+                               
+                                setTimeout(function () {
+                                        location.reload();
+                                    }, 6000);
+                            } else {
+                                $.notify('Error fetching total working hours.', {
+                                    className: "error",
+                                    position: "top center"
+                                });
+                            }
+                        },
+                        error: function () {
+                            $.notify('An error occurred while fetching total working hours.', {
+                                className: "error",
+                                position: "top center"
+                            });
+                        }
                     });
-                } else {
-                    $.notify('Error fetching total working hours.', {
+                },
+                error: function () {
+                    $.notify('Punch out failed. Please try again.', {
                         className: "error",
                         position: "top center"
                     });
                 }
-            },
-            error: function () {
-                $.notify('An error occurred while fetching total working hours.', {
-                    className: "error",
-                    position: "top center"
-                });
-            }
+            });
         });
-    }
+    });
 </script>
