@@ -92,7 +92,7 @@ namespace Payroll.Application.Services.ServiceImplementation
                    salarySlipHtml,
                    "Your Salary Slip for " + DateTime.Now.ToString("MMMM yyyy"),
                    pdfBytes,
-                   unitOfWork.empRepository.getFullName(employee.UserId)+"SalarySlip.pdf"
+                   unitOfWork.empRepository.getFullName(employee.UserId)+" SalarySlip.pdf"
                );
                 }
             }
@@ -101,20 +101,48 @@ namespace Payroll.Application.Services.ServiceImplementation
         {
             var empName = unitOfWork.empRepository.getFullName(employee.UserId);
             var EmpDep = unitOfWork.empRepository.GetDepartmentName(employee.Id);
-
             var htmlContent = $@"
-            <html>
-                <body>
-                    <h1>Salary Slip for {empName}</h1>
-                    <p>Employee ID: {employee.Id}</p>
-                    <p>Department: {EmpDep}</p>
-                    <p>Base Salary: {salary.SalaryAmount:C}</p>
-                    <p>Bonus: {salary.Bonus}%</p>
-                    <p>Total Salary: {salary.TotalSalary:C}</p>
-                    <p>Payment Date: {salary.PaymentDate.ToShortDateString()}</p>
-                    <p>Thank you for your hard work!</p>
-                </body>
-            </html>";
+<html>
+    <body style='font-family:Arial,sans-serif;'>
+        <div style='text-align:center; margin-bottom:20px;'>
+            <img src='https://example.com/logo.png' alt='Company Logo' style='height:80px;' />
+            <h2>Salary Slip</h2>
+        </div>
+        <table style='width:60%; margin:0 auto; border-collapse:collapse;'>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Employee Name</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{empName}</td>
+            </tr>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Employee ID</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{employee.Id}</td>
+            </tr>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Department</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{EmpDep}</td>
+            </tr>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Base Salary</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{salary.SalaryAmount:C}</td>
+            </tr>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Bonus</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{salary.Bonus}%</td>
+            </tr>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Total Salary</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{salary.TotalSalary:C}</td>
+            </tr>
+            <tr>
+                <th style='text-align:left; padding:8px; border-bottom:1px solid #ccc;'>Payment Date</th>
+                <td style='padding:8px; border-bottom:1px solid #ccc;'>{salary.PaymentDate.ToShortDateString()}</td>
+            </tr>
+        </table>
+       
+    </body>
+</html>";
+
+      
             return htmlContent;
         }
     }
