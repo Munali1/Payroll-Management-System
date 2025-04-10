@@ -1,11 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Payroll.Application.Services.ServiceInterface;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Payroll.Application.Services.ServiceImplementation
@@ -18,7 +15,8 @@ namespace Payroll.Application.Services.ServiceImplementation
         {
             this.configuration = configuration;
         }
-        public async Task sendEmail(string email, string body, string subject)
+
+        public async Task sendEmail(string email, string body, string subject, byte[] attachment = null, string attachmentName = null)
         {
             var emailSettings = configuration.GetSection("EmailSettings");
 
@@ -31,6 +29,12 @@ namespace Payroll.Application.Services.ServiceImplementation
             };
 
             mailMessage.To.Add(email);
+            if (attachment != null && attachmentName != null)
+            {
+                var attachmentStream = new System.IO.MemoryStream(attachment);
+                var attachmentData = new Attachment(attachmentStream, attachmentName, "application/pdf");
+                mailMessage.Attachments.Add(attachmentData);
+            }
 
             using (var smtpClient = new SmtpClient(emailSettings["SmtpServer"])
             {
@@ -44,4 +48,3 @@ namespace Payroll.Application.Services.ServiceImplementation
         }
     }
 }
-

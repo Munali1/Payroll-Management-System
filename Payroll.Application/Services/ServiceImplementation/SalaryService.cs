@@ -8,11 +8,13 @@ namespace Payroll.Application.Services.ServiceImplementation
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IEmailServiceInterface emailService;
+        private readonly IPdfGenerator pdfGenerator;
 
-        public SalaryService(IUnitOfWork unitOfWork,IEmailServiceInterface emailService)
+        public SalaryService(IUnitOfWork unitOfWork,IEmailServiceInterface emailService,IPdfGenerator pdfGenerator)
         {
             this.unitOfWork = unitOfWork;
             this.emailService = emailService;
+            this.pdfGenerator = pdfGenerator;
         }
         public async Task Create(Salary salary)
         {
@@ -84,8 +86,14 @@ namespace Payroll.Application.Services.ServiceImplementation
                     await unitOfWork.SaveAsync();
               
                     var salarySlipHtml = GenerateSalarySlipHtml(salary, employee);
-
-                   await emailService.sendEmail(unitOfWork.empRepository.getEmpEmail(employee.UserId), salarySlipHtml, "Your Salary Slip for " + DateTime.Now.ToString("MMMM yyyy"));
+                    var pdfBytes = pdfGenerator.GeneratePdfFromHtml(salarySlipHtml);
+                    await emailService.sendEmail(
+                   unitOfWork.empRepository.getEmpEmail(employee.UserId),
+                   salarySlipHtml,
+                   "Your Salary Slip for " + DateTime.Now.ToString("MMMM yyyy"),
+                   pdfBytes,
+                   unitOfWork.empRepository.getFullName(employee.UserId)+"SalarySlip.pdf"
+               );
                 }
             }
         }

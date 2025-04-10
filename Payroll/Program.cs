@@ -1,3 +1,5 @@
+using DinkToPdf.Contracts;
+using DinkToPdf;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,7 @@ using Payroll.Application.Services.ServiceInterface;
 using Payroll.Domain.Entities;
 using Payroll.Infrastructure.BackgroundJobs;
 using Payroll.Infrastructure.Data;
+using Payroll.Infrastructure.ExternalServices;
 using Payroll.Infrastructure.UnitOfWork;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,8 @@ builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<IEmailServiceInterface, EmailService>();
 builder.Services.AddScoped<IAttendenceService, AttendenceService>();
 builder.Services.AddScoped<IPasswordGenerator, PasswordGenerator>();
+builder.Services.AddSingleton<IConverter, SynchronizedConverter>();
+builder.Services.AddTransient<IPdfGenerator, PdfGenerator>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 var app = builder.Build();
