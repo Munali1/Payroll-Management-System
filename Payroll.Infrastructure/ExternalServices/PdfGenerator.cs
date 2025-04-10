@@ -1,11 +1,7 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
 using Payroll.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Payroll.Infrastructure.ExternalServices
 {
@@ -38,4 +34,4 @@ namespace Payroll.Infrastructure.ExternalServices
         }
     }
     }
-}
+

@@ -118,6 +118,7 @@
                     },
                     {
                         caption: "Actions",
+                            allowExporting:false,
                         cellTemplate: function(container, options) {
                             var id = options.data.Id;
                             var isAdmin = @Json.Serialize(User.IsInRole("Admin"));

@@ -98,6 +98,7 @@
                     { caption: "Payment Date", dataField: "PaymentDate", dataType: "date", format: "yyyy-MM-dd" },
                     {
                         caption: "Actions",
+                            allowExporting:false,
                         cellTemplate: function (container, options) {
                             var id = options.data.Id;
                             $("<a>")
