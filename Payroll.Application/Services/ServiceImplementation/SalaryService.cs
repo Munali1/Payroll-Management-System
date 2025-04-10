@@ -60,7 +60,22 @@ namespace Payroll.Application.Services.ServiceImplementation
         public async Task ProcessMonthlySalaries()
         {
             var employees = await unitOfWork.empRepository.GetAllAsync();
-
+            var salaryByDesignation = new Dictionary<string, decimal>
+    {
+        { "Intern", 15000 },
+        { "Associate", 30000 },
+        { "Mid Level", 50000 },
+        { "Senior", 70000 },
+        { "Principal", 100000 }
+    };
+            var bonusByDesignation = new Dictionary<string, decimal>
+            {
+                 { "Intern", 2 },
+                 { "Associate", 3 },
+                 { "Mid Level", 5 },
+                 { "Senior", 7 },
+                 { "Principal", 1}
+            };
             foreach (var employee in employees)
             {
                 var exists = await unitOfWork.salaryRepository.GetAsync(s => s.EmployeeId == employee.Id &&
@@ -69,9 +84,12 @@ namespace Payroll.Application.Services.ServiceImplementation
 
                 if (exists == null)
                 {
-                    decimal baseSalary = 50000;  
-                    decimal bonus = 5;    
-                    decimal totalSalary = baseSalary + (bonus/100)*baseSalary;
+                    decimal baseSalary = salaryByDesignation.ContainsKey(employee.Designation ?? "")
+                ? salaryByDesignation[employee.Designation]
+                : 20000;
+                    decimal bonus = bonusByDesignation.ContainsKey(employee.Designation ?? "") ? bonusByDesignation[employee.Designation] : 4;
+        
+                    decimal totalSalary = baseSalary + (bonus / 100) * baseSalary;
 
                     var salary = new Salary
                     {
