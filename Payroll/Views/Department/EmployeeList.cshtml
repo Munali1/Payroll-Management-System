@@ -1,45 +1,66 @@
-﻿@model IEnumerable<Payroll.Domain.Entities.Employee>
+﻿@using DevExtreme.AspNet.Mvc
+@using Newtonsoft.Json
+@model IEnumerable<Payroll.Domain.Entities.Employee>
 
 @{
     ViewData["Title"] = "Employee List";
+    var employeesJson = JsonConvert.SerializeObject(Model.Select(e => new
+    {
+        e.ApplicationUser.FirstName,
+        e.ApplicationUser.LastName,
+        e.ApplicationUser.Email,
+        Department = e.DepartmentId, 
+        e.Designation,
+        ImageUrl = string.IsNullOrEmpty(e.EmployeeImage) ? null : e.EmployeeImage
+    }));
 }
 
 <h2>Employee List</h2>
 
-<a asp-action="Create" class="btn btn-success mb-3">Add Employee</a>
+<div id="employeeGrid"></div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Designation</th>
-            <th>Profile Image</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var employee in Model)
-        {
-            <tr>
-                <td>@employee.ApplicationUser.FirstName</td>
-                <td>@employee.ApplicationUser.LastName</td>
-                <td>@employee.ApplicationUser.Email</td>
-                <td>@employee.DepartmentId</td>
-                <td>@employee.Designation</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(employee.EmployeeImage))
-                    {
-                        <img src="@employee.EmployeeImage" width="50" height="50" />
+<script>
+    $(function () {
+        $("#employeeGrid").dxDataGrid({
+            dataSource: @Html.Raw(employeesJson),
+            keyExpr: "Email",
+            showBorders: true,
+            columnAutoWidth: true,
+            paging: {
+                pageSize: 10
+            },
+            pager: {
+                showPageSizeSelector: true,
+                allowedPageSizes: [5, 10, 20],
+                showInfo: true
+            },
+            columns: [
+                {
+                       caption: "No", width: 50,
+        cellTemplate: function (container, options) {
+            container.text(options.rowIndex + 1);
+        }},
+                { dataField: "FirstName", caption: "First Name" },
+                { dataField: "LastName", caption: "Last Name" },
+                { dataField: "Email", caption: "Email" },
+                { dataField: "Department", caption: "Department" },
+                { dataField: "Designation", caption: "Designation" },
+                {
+                    dataField: "ImageUrl",
+                    caption: "Profile Image",
+                    cellTemplate: function (container, options) {
+                        if (options.value) {
+                            $("<img>")
+                                .attr("src", options.value)
+                                .css("width", "50px")
+                                .css("height", "50px")
+                                .appendTo(container);
+                        } else {
+                            container.append("No Image");
+                        }
                     }
-                    else
-                    {
-                        <span>No Image</span>
-                    }
-                </td>
-           
-            </tr>
-        }
-    </tbody>
-</table>
+                }
+            ]
+        });
+    });
+</script>

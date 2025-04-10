@@ -21,12 +21,19 @@
 
     <div class="form-group">
         <label>Email</label>
-        <input type="email" name="email" class="form-control" value="@ViewBag.Email" required />
+        <input type="email" name="email" class="form-control" value="@ViewBag.Email" required readonly/>
     </div>
 
     <div class="form-group">
-        <label>Department</label>
-        <input asp-for="DepartmentId" class="form-control" />
+        <label asp-for="DepartmentId">Department Name</label>
+        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments" required>
+            <option value="">Select Department</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>New Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Leave blank to keep unchanged" />
     </div>
 
     <div class="form-group">

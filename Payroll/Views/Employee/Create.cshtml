@@ -1,4 +1,5 @@
-﻿@model Payroll.Domain.Entities.Employee
+﻿@using Payroll.Web.StaticValues
+@model Payroll.Domain.Entities.Employee
 
 @{
     ViewData["Title"] = "Add Employee";
@@ -38,6 +39,10 @@
     <div class="form-group">
         <label>Designation</label>
         <input asp-for="Designation" class="form-control" />
+        @foreach (var item in StaticValues.Designation)
+        {
+            <option value="@item">@item</option>
+        }
     </div>
 
     <div class="form-group">

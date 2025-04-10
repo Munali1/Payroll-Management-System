@@ -32,6 +32,7 @@ builder.Services.AddScoped<IBankDetailsService, BankDetailsService>();
 builder.Services.AddScoped<ISalaryService, SalaryService>();
 builder.Services.AddScoped<IEmailServiceInterface, EmailService>();
 builder.Services.AddScoped<IAttendenceService, AttendenceService>();
+builder.Services.AddScoped<IPasswordGenerator, PasswordGenerator>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 var app = builder.Build();

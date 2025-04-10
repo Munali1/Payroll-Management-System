@@ -14,14 +14,16 @@ namespace Payroll.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDepartmentService departmentService;
         private readonly IEmailServiceInterface emailService;
+        private readonly IPasswordGenerator passwordGenerator;
 
         public EmployeeController(IEmployeeService employeeService, UserManager<ApplicationUser> userManager,
-            IDepartmentService departmentService,IEmailServiceInterface emailService)
+            IDepartmentService departmentService,IEmailServiceInterface emailService,IPasswordGenerator passwordGenerator)
         {
             _employeeService = employeeService;
             _userManager = userManager;
             this.departmentService = departmentService;
             this.emailService = emailService;
+            this.passwordGenerator = passwordGenerator;
         }
 
         public async Task<IActionResult> Index()
@@ -40,7 +42,7 @@ namespace Payroll.Web.Controllers
 
  
         [HttpPost]
-        public async Task<IActionResult> Create(Employee employee, IFormFile file, string firstName, string lastName, string email, string password)
+        public async Task<IActionResult> Create(Employee employee, IFormFile file, string firstName, string lastName, string email)
         {
             var departments = await departmentService.GetDepartments();
             ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
@@ -52,7 +54,7 @@ namespace Payroll.Web.Controllers
                     FirstName = firstName,
                     LastName = lastName
                 };
-
+                string password = passwordGenerator.GeneratePassword();
                 var result = await _userManager.CreateAsync(user, password);
 
                 if (result.Succeeded)
@@ -106,10 +108,11 @@ namespace Payroll.Web.Controllers
             return View(employee);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Employee employee, IFormFile file, string firstName, string lastName, string email)
+        public async Task<IActionResult> Edit(Employee employee, IFormFile file, string firstName, string lastName, string password)
         {
             var departments = await departmentService.GetDepartments();
             ViewBag.Departments = new SelectList(departments, "DepartmentId", "DepartmentName");
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByIdAsync(employee.UserId);
@@ -117,15 +120,26 @@ namespace Payroll.Web.Controllers
                 {
                     user.FirstName = firstName;
                     user.LastName = lastName;
-                    user.Email = email;
+                    if (!string.IsNullOrWhiteSpace(password))
+                    {
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                        var passwordResult = await _userManager.ResetPasswordAsync(user, token, password);
+                        if (!passwordResult.Succeeded)
+                 
+                            foreach (var error in passwordResult.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                            return View(employee); 
+                        }
+                    }
+
                     await _userManager.UpdateAsync(user);
                 }
 
                 await _employeeService.Update(employee, file);
-                return RedirectToAction("Index");
+                return RedirectToAction("Details","Employee",new {id=employee.Id});
             }
-            return View(employee);
-        }
 
    
         public async Task<IActionResult> Details(int id)
