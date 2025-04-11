@@ -51,6 +51,7 @@ builder.Services.AddScoped<IEmailServiceInterface, EmailService>();
 builder.Services.AddScoped<IAttendenceService, AttendenceService>();
 builder.Services.AddScoped<IPasswordGenerator, PasswordGenerator>();
 builder.Services.AddScoped<SalaryJobScheduler>();
+builder.Services.AddScoped<AttendenceJobScheduler>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -73,8 +74,12 @@ using (var scope = app.Services.CreateScope())
     var scheduler = scope.ServiceProvider.GetRequiredService<SalaryJobScheduler>();
     scheduler.ScheduleMonthlyJob();
 }
-
-app.UseHttpsRedirection();
+using (var scope = app.Services.CreateScope())
+{
+    var schedular=scope.ServiceProvider.GetRequiredService<AttendenceJobScheduler>();
+    schedular.ScheduleMonthlyJob();
+}
+    app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();

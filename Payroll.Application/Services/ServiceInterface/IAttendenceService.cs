@@ -16,6 +16,10 @@ namespace Payroll.Application.Services.ServiceInterface
         Task PunchOut(int employeeId);
         Task<Attendence> getLatest(int id);
         Task<TimeSpan> getTotalWorkingHours(int EmpId);
+        Task ProcessMonthlyAttendence();
+        string GenerateAttendenceReportHtml(Employee employee, int presentDays, int absentDays, IEnumerable<Attendence> records);
+
+        
 
     }
 }

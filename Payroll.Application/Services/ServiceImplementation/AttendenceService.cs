@@ -1,6 +1,7 @@
 ﻿using Payroll.Application.Interfaces;
 using Payroll.Application.Services.ServiceInterface;
 using Payroll.Domain.Entities;
+using System.Text;
 
 
 namespace Payroll.Application.Services.ServiceImplementation
@@ -8,10 +9,14 @@ namespace Payroll.Application.Services.ServiceImplementation
     public class AttendenceService : IAttendenceService
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IEmailServiceInterface emailService;
+        private readonly IPdfGenerator pdfGenerator;
 
-        public AttendenceService(IUnitOfWork unitOfWork)
+        public AttendenceService(IUnitOfWork unitOfWork,IEmailServiceInterface emailService,IPdfGenerator pdfGenerator)
         {
             this.unitOfWork = unitOfWork;
+            this.emailService = emailService;
+            this.pdfGenerator = pdfGenerator;
         }
         public async Task Create(Attendence attendence)
         {
@@ -25,6 +30,29 @@ namespace Payroll.Application.Services.ServiceImplementation
             unitOfWork.attendanceRepository.Remove(attendence);
             await unitOfWork.SaveAsync();
         }
+
+        public string GenerateAttendenceReportHtml(Employee employee,int presentDays, int absentDays, IEnumerable<Attendence> records)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"<h2>Attendance Report for {unitOfWork.empRepository.getFullName(employee.UserId)} - {DateTime.Now.ToString("MMMM yyyy")}</h2>");
+            sb.Append($"<p><strong>Present Days:</strong> {presentDays}</p>");
+            sb.Append($"<p><strong>Absent Days:</strong> {absentDays}</p>");
+            sb.Append("<table border='1' cellpadding='5' cellspacing='0'><tr><th>Date</th><th>In Time</th><th>Out Time</th><th>Hours Worked</th></tr>");
+
+            foreach (var record in records.OrderBy(r => r.inTime))
+            {
+                sb.Append("<tr>");
+                sb.Append($"<td>{record.inTime?.ToShortDateString()}</td>");
+                sb.Append($"<td>{record.inTime?.ToShortTimeString()}</td>");
+                sb.Append($"<td>{record.outTime?.ToShortTimeString()}</td>");
+                sb.Append($"<td>{record.workingHours?.ToString(@"hh\:mm")}</td>");
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</table>");
+            return sb.ToString();
+        }
+
 
         public async Task<List<Attendence>> getAttendenceList()
         {
@@ -76,6 +104,45 @@ namespace Payroll.Application.Services.ServiceImplementation
             }
             TimeSpan workedDuration = attendance.outTime.Value - attendance.inTime.Value;
             return $"{workedDuration.Hours} hours {workedDuration.Minutes} mins";
+        }
+
+        public async Task ProcessMonthlyAttendence()
+        {
+            var employees = await unitOfWork.empRepository.GetAllAsync();
+            int currentMonth = DateTime.Now.Month;
+            int currentYear = DateTime.Now.Year;
+
+            foreach (var employee in employees)
+            {
+                
+                var monthlyAttendances = await unitOfWork.attendanceRepository.GetAllAsync(
+                    a => a.EmployeeId == employee.Id &&
+                         a.inTime.HasValue &&
+                         a.inTime.Value.Month == currentMonth &&
+                         a.inTime.Value.Year == currentYear
+                );
+                if (monthlyAttendances != null && monthlyAttendances.Any())
+                {
+                    int totalWorkingDays = 22; 
+                    int presentDays = monthlyAttendances.Count(a =>
+                        a.workingHours.HasValue &&
+                        a.workingHours.Value.TotalHours >= 4 
+                    );
+                    int absentDays = totalWorkingDays - presentDays;
+                 
+
+                    var reportHtml = GenerateAttendenceReportHtml(employee, presentDays, absentDays, monthlyAttendances);
+                    var pdfBytes = pdfGenerator.GeneratePdfFromHtml(reportHtml);
+
+                    await emailService.sendEmail(
+                        unitOfWork.empRepository.getEmpEmail(employee.UserId),
+                        reportHtml,
+                        "Your Attendance Report for " + DateTime.Now.ToString("MMMM yyyy"),
+                        pdfBytes,
+                        unitOfWork.empRepository.getFullName(employee.UserId) + "_AttendanceReport.pdf"
+                    );
+                }
+            }
         }
 
         public async Task PunchIn(int employeeId)
