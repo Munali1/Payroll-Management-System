@@ -15,7 +15,7 @@
             <div class="col-md-4">
                 @if (!string.IsNullOrEmpty(Model.EmployeeImage))
                 {
-                    <img src="~/Images/@Model.EmployeeImage" alt="Profile Image" class="img-thumbnail" width="150" height="150" />
+                    <img src="~/@Model.EmployeeImage" alt="Profile Image" class="img-thumbnail" width="150" height="150" />
                 }
                 else
                 {
@@ -47,8 +47,10 @@
                 </table>
             </div>
         </div>
-
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        @if(User.IsInRole("Employee")){
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        }
+       
     </div>
 </div>
