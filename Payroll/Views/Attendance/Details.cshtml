@@ -1,85 +1,136 @@
 ﻿@using Newtonsoft.Json
 @model IEnumerable<Payroll.Domain.Entities.Attendence>
+
 @{
     ViewData["Title"] = "Attendence List";
+
+    int presentDays = Model.Count(a => a.workingHours.HasValue);
+    int totalDays = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+    int absentDays = totalDays - presentDays;
+
+    var chartData = new
+    {
+        labels = new[] { "Present", "Absent" },
+        values = new[] { presentDays, absentDays }
+    };
 }
 
 <div class="container mt-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
 
+    <div class="mb-4 text-center" style="display: flex; justify-content: center;">
+        <canvas id="attendanceChart" width="200" height="200"></canvas>
+    </div>
+
 
     <div id="gridContainer"></div>
+</div>
 
-    <script>
-        $(function(){
-            var attendenceData = @Html.Raw(JsonConvert.SerializeObject(Model.Select(s => new
-            {
-                Id = s.AttendenceId,
-                inTime = s.inTime,
-                outTime = s.outTime,
-                workingHours = s.workingHours,
-              
-            })));
 
-            $("#gridContainer").dxDataGrid({
-                dataSource: attendenceData,
-                keyExpr: "Id",
-                columnAutoWidth: true,
-                showBorders: true,
-                filterRow: { visible: true },
-                searchPanel: { visible: true, width: 240, placeholder: "Search..." },
-                export: {
-                    enabled: true,
-                    fileName: "Attendence_List",
-                    allowExportSelectedData: true
-                },
-                onExporting: function (e) {
-                    var workbook = new ExcelJS.Workbook();
-                    var worksheet = workbook.addWorksheet("Attendence List");
-                    DevExpress.excelExporter.exportDataGrid({
-                        component: e.component,
-                        worksheet: worksheet,
-                        autoFilterEnabled: true
-                    }).then(() => {
-                        workbook.xlsx.writeBuffer().then((buffer) => {
-                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Attendence_List.xlsx");
-                        });
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+   
+    const chartData = @Html.Raw(JsonConvert.SerializeObject(chartData));
+
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+       const attendanceChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Attendance Overview',
+                data: chartData.values,
+                backgroundColor: ['#4CAF50', '#F44336'],
+                borderColor: ['#388E3C', '#D32F2F'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            layout: {
+                padding: 10
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+                title: {
+                    display: true,
+                    text: 'Monthly Attendance Overview'
+                }
+            }
+        }
+    });
+</script>
+
+
+<script>
+    $(function(){
+        var attendenceData = @Html.Raw(JsonConvert.SerializeObject(Model.Select(s => new
+        {
+            Id = s.AttendenceId,
+            inTime = s.inTime,
+            outTime = s.outTime,
+            workingHours = s.workingHours,
+        })));
+
+        $("#gridContainer").dxDataGrid({
+            dataSource: attendenceData,
+            keyExpr: "Id",
+            columnAutoWidth: true,
+            showBorders: true,
+            filterRow: { visible: true },
+            searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+            export: {
+                enabled: true,
+                fileName: "Attendence_List",
+                allowExportSelectedData: true
+            },
+            onExporting: function (e) {
+                var workbook = new ExcelJS.Workbook();
+                var worksheet = workbook.addWorksheet("Attendence List");
+                DevExpress.excelExporter.exportDataGrid({
+                    component: e.component,
+                    worksheet: worksheet,
+                    autoFilterEnabled: true
+                }).then(() => {
+                    workbook.xlsx.writeBuffer().then((buffer) => {
+                        saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Attendence_List.xlsx");
                     });
-                    e.cancel = true;
-                },
-                toolbar: {
-                    items: [
-                        {
-                            widget: "dxButton",
-                            options: {
-                                icon: "exportxlsx",
-                                text: "Export to Excel",
-                                onClick: function () {
-                                    var dataGrid = $("#gridContainer").dxDataGrid("instance");
-                                    var workbook = new ExcelJS.Workbook();
-                                    var worksheet = workbook.addWorksheet("Attendence List");
-                                    DevExpress.excelExporter.exportDataGrid({
-                                        component: dataGrid,
-                                        worksheet: worksheet,
-                                        autoFilterEnabled: true
-                                    }).then(() => {
-                                        workbook.xlsx.writeBuffer().then((buffer) => {
-                                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Attendence_List.xlsx");
-                                        });
+                });
+                e.cancel = true;
+            },
+            toolbar: {
+                items: [
+                    {
+                        widget: "dxButton",
+                        options: {
+                            icon: "exportxlsx",
+                            text: "Export to Excel",
+                            onClick: function () {
+                                var dataGrid = $("#gridContainer").dxDataGrid("instance");
+                                var workbook = new ExcelJS.Workbook();
+                                var worksheet = workbook.addWorksheet("Attendence List");
+                                DevExpress.excelExporter.exportDataGrid({
+                                    component: dataGrid,
+                                    worksheet: worksheet,
+                                    autoFilterEnabled: true
+                                }).then(() => {
+                                    workbook.xlsx.writeBuffer().then((buffer) => {
+                                        saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Attendence_List.xlsx");
                                     });
-                                }
+                                });
                             }
                         }
-                    ]
-                },
-                columns: [
-                    { caption: "ID", dataField: "Id", width: 50 },
-
-                    { caption: "In Time", dataField: "inTime", dataType: "datetime" },
-                    { caption: "Out Time", dataField: "outTime", dataType: "datetime" },
-                    { caption: "Working Hours", dataField: "workingHours", dataType: "number" }
+                    }
                 ]
-            });
+            },
+            columns: [
+                { caption: "ID", dataField: "Id", width: 50 },
+                { caption: "In Time", dataField: "inTime", dataType: "datetime" },
+                { caption: "Out Time", dataField: "outTime", dataType: "datetime" },
+                { caption: "Working Hours", dataField: "workingHours", dataType: "number" }
+            ]
         });
-    </script>
-</div>
+    });
+</script>

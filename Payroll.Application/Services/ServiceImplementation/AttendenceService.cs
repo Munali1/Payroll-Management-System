@@ -69,6 +69,17 @@ namespace Payroll.Application.Services.ServiceImplementation
             return attendence;
         }
 
+        public async Task<List<Attendence>> getMonthlyAttendence(int EmpId)
+        {
+            int currentMonth=DateTime.Now.Month;
+            int currentYear=DateTime.Now.Year;
+            var monthlyattendence = await unitOfWork.attendanceRepository.GetAllAsync(
+                a => a.EmployeeId == EmpId &&
+                a.inTime.HasValue && a.inTime.Value.Month == currentMonth &&
+                a.inTime.Value.Year == currentYear);
+            return monthlyattendence;
+        }
+
         public async Task<TimeSpan> getTotalWorkingHours(int EmpId)
         {
             var attendanceRecords = await unitOfWork.attendanceRepository

@@ -58,7 +58,7 @@ namespace Payroll.Web.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
-            var EmpAttendence=await attendenceService.getIndividualAttendence(id);
+            var EmpAttendence=await attendenceService.getMonthlyAttendence(id);
             return View(EmpAttendence);
         }
 

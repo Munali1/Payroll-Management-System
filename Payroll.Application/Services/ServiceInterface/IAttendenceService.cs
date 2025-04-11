@@ -19,7 +19,7 @@ namespace Payroll.Application.Services.ServiceInterface
         Task ProcessMonthlyAttendence();
         string GenerateAttendenceReportHtml(Employee employee, int presentDays, int absentDays, IEnumerable<Attendence> records);
 
-        
+        Task<List<Attendence>> getMonthlyAttendence(int EmpId);
 
     }
 }
