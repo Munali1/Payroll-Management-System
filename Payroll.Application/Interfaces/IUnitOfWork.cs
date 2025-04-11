@@ -13,6 +13,7 @@ namespace Payroll.Application.Interfaces
         IBankDetailsRepository bankDetailsRepository { get; }
         ISalaryRepository salaryRepository { get; }
         IAttendenceRepository attendanceRepository { get; }
+        ILeaveRepository leaveRepository { get; }
         Task SaveAsync();
     }
 }

@@ -134,12 +134,11 @@ namespace Payroll.Application.Services.ServiceImplementation
                 );
                 if (monthlyAttendances != null && monthlyAttendances.Any())
                 {
-                    int totalWorkingDays = 22; 
+                    int totalDays = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
                     int presentDays = monthlyAttendances.Count(a =>
-                        a.workingHours.HasValue &&
-                        a.workingHours.Value.TotalHours >= 4 
+                        a.workingHours.HasValue
                     );
-                    int absentDays = totalWorkingDays - presentDays;
+                    int absentDays = totalDays - presentDays;
                  
 
                     var reportHtml = GenerateAttendenceReportHtml(employee, presentDays, absentDays, monthlyAttendances);

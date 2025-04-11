@@ -14,6 +14,7 @@ namespace Payroll.Application.Mapper
             CreateMap<Department, DepartmentViewModel>().ReverseMap();
             CreateMap<Employee, EmployeeViewModel>().ReverseMap();
             CreateMap<Salary, SalaryViewModel>().ReverseMap ();
+            CreateMap<Leave, LeaveCreateDTO>().ReverseMap();
         }
     }
 }

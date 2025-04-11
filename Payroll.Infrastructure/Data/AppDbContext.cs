@@ -14,5 +14,6 @@ namespace Payroll.Infrastructure.Data
         public DbSet<BankDetails> Banks { get; set; }
         public DbSet<Salary> Salaries{ get; set;}
         public DbSet<Attendence> Attendences { get; set; }
+        public DbSet<Leave> Leaves { get; set; }
     }
 }
