@@ -1,0 +1,41 @@
+﻿@model Payroll.Domain.Entities.Leave
+
+@{
+    ViewBag.Title = "Request Leave";
+}
+
+<h2>Request Leave</h2>
+<form asp-action="RequestLeave" method="post">
+    <div class="form-group">
+        <label asp-for="LeaveType" class="control-label">Leave Type</label>
+        <select asp-for="LeaveType" class="form-control" asp-items="@ViewBag.LeaveType">
+            <option value="">Select Leave</option>
+        </select>
+        <span asp-validation-for="LeaveType" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LeaveDate" class="control-label">Leave Date</label>
+        <input asp-for="LeaveDate" class="form-control" type="date" />
+        <span asp-validation-for="LeaveDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LeaveDuration" class="control-label">Leave Duration (in days)</label>
+        <input asp-for="LeaveDuration" class="form-control" type="number" step="0.5" min="0.5" />
+        <span asp-validation-for="LeaveDuration" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LeaveReason" class="control-label">Reason for Leave</label>
+        <textarea asp-for="LeaveReason" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="LeaveReason" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

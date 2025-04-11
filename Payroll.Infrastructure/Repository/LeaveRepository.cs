@@ -18,7 +18,7 @@ namespace Payroll.Infrastructure.Repository
             this.context = context;
         }
  
-        public async Task ApproveLeave(Leave leave)
+        public async Task UpdateLeave(Leave leave)
         {
             context.Leaves.Update(leave);
         }

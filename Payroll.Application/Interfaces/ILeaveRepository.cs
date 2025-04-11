@@ -10,6 +10,6 @@ namespace Payroll.Application.Interfaces
     public interface ILeaveRepository:IRepository<Leave>
     {
     
-        Task ApproveLeave(Leave leave);
+        Task UpdateLeave(Leave leave);
     }
 }

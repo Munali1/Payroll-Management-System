@@ -22,7 +22,7 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public async Task approveLeave(Leave leave)
         {
-            unitOfWork.leaveRepository.ApproveLeave(leave);
+            unitOfWork.leaveRepository.UpdateLeave(leave);
             await unitOfWork.SaveAsync();
         }
 
@@ -72,10 +72,17 @@ namespace Payroll.Application.Services.ServiceImplementation
             return await unitOfWork.leaveRepository.GetAllAsync();
         }
 
+        public async Task<Leave> getIndividuaLeave(int id)
+        {
+            return await unitOfWork.leaveRepository.GetAsync(x => x.Id == id);
+        }
+
         public async Task<List<Leave>> getIndividualEmployeeLeave(int id)
         {
             return await unitOfWork.leaveRepository.GetAllAsync(x => x.EmployeeId == id);
         }
+        
+
 
         public async Task LeaveApproveMail()
         {
@@ -85,8 +92,8 @@ namespace Payroll.Application.Services.ServiceImplementation
                 var sendUpdates = await unitOfWork.leaveRepository.GetAllAsync(
                     a => a.EmployeeId == employee.Id &&
                     a.Status == "Approved"||a.Status=="Rejected"
-                    );
-                if (sendUpdates != null && sendUpdates.Any())
+                   );
+                if (sendUpdates.Any())
                 {
                     foreach(var leave in sendUpdates)
                     {
@@ -94,6 +101,8 @@ namespace Payroll.Application.Services.ServiceImplementation
                             await emailService.sendEmail(unitOfWork.empRepository.getEmpEmail(employee.UserId),
                             reportHtml,
                            "Leave Approval for "+leave.LeaveDate);
+                   
+
                     }
                 }
 

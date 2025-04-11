@@ -13,7 +13,7 @@ namespace Payroll.Application.Services.ServiceInterface
         Task approveLeave(Leave leave);
         Task<List<Leave>> getAllLeaves();
         Task<List<Leave>> getIndividualEmployeeLeave(int id);
-
+        Task<Leave> getIndividuaLeave(int id);
         Task LeaveApproveMail();
         string GenerateMail(Employee employee,Leave leave);
 

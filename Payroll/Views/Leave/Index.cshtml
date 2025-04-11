@@ -1,0 +1,91 @@
+﻿@using Payroll.Application.Services.ServiceInterface
+@using System.Security.Claims
+@model IEnumerable<Payroll.Domain.Entities.Leave>
+@inject IEmployeeService employeeService
+@{
+    ViewBag.Title = "Leave Requests";
+    ViewBag.IsHr = User.IsInRole("HR");
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    string name = employeeService.getName(userId);
+
+}
+
+<h2>Leave Requests</h2>
+
+
+<div id="leaveGridContainer"></div>
+
+@section Scripts {
+    <script>
+        $(function() {
+        
+            $("#leaveGridContainer").dxDataGrid({
+                dataSource: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
+                columns: [
+                    {
+                        dataField: "name",
+                        caption: "Employee Name",
+                        allowSorting: true,
+                        width: 200
+                    },
+                    {
+                        dataField: "LeaveType",
+                        caption: "Leave Type",
+                        allowSorting: true,
+                        width: 150
+                    },
+                    {
+                        dataField: "LeaveDate",
+                        caption: "Leave Date",
+                        dataType: "date",
+                        format: "shortDate",
+                        allowSorting: true,
+                        width: 150
+                    },
+                    {
+                        dataField: "LeaveDuration",
+                        caption: "Leave Duration",
+                        allowSorting: true,
+                        width: 120
+                    },
+                    {
+                        dataField: "Status",
+                        caption: "Status",
+                        allowSorting: true,
+                        width: 120
+                    },
+                    {
+                        type: "buttons",
+                        caption: "Actions",
+                        buttons: [
+                            {
+                                hint: "Approve/Reject",
+                                icon: "check",
+                                visible: '@(ViewBag.IsHR ? "true" : "false")',
+                                onClick: function(e) {
+                                    var leaveId = e.row.data.Id;
+                                    window.location.href = '@Url.Action("ApproveLeave", "Leave", new { id = "__leaveId__" })'.replace("__leaveId__", leaveId);
+                                }
+                            }
+                        ]
+                    }
+                ],
+                paging: {
+                    pageSize: 10
+                },
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [5, 10, 20]
+                },
+                sorting: {
+                    mode: "multiple"
+                },
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                showBorders: true
+            });
+        });
+    </script>
+}
