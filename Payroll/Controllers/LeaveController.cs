@@ -61,9 +61,9 @@ namespace Payroll.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles ="HR")]
-        public IActionResult ApproveLeave(int id)
+        public async Task<IActionResult> ApproveLeave(int id)
         {
-            var leave = leaveService.getIndividuaLeave(id);
+            var leave = await leaveService.getIndividuaLeave(id);
             ViewBag.LeaveStatus = StaticValues.StaticValues.LeaveStatus.Select(l => new SelectListItem { Text=l,Value=l });
             if(leave==null)
             {

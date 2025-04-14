@@ -1,9 +1,9 @@
-﻿<div class="container mt-3">
-    <div class="row">
-        @inject IEmployeeService employeeService
+﻿  @inject IEmployeeService employeeService
         @using System.Security.Claims
-@using Payroll.Application.Services.ServiceInterface
-
+        @using Payroll.Application.Services.ServiceInterface
+<div class="container mt-3">
+    <div class="row">
+      
         @{
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int empId = employeeService.getEmpId(userId);
@@ -48,6 +48,15 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-md-4 mt-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <i class="bi bi-calendar-event display-4 text-danger"></i>
+                    <h5 class="card-title">Leaves</h5>
+                    <a asp-controller="Leave" asp-action="EmployeeLeaves" asp-route-id="@empId" class="btn btn-danger">View</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-

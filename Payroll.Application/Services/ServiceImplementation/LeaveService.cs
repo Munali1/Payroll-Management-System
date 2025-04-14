@@ -69,17 +69,17 @@ namespace Payroll.Application.Services.ServiceImplementation
 
         public async Task<List<Leave>> getAllLeaves()
         {
-            return await unitOfWork.leaveRepository.GetAllAsync();
+            return await unitOfWork.leaveRepository.GetAllAsync(null,"Employee");
         }
 
         public async Task<Leave> getIndividuaLeave(int id)
         {
-            return await unitOfWork.leaveRepository.GetAsync(x => x.Id == id);
+            return await unitOfWork.leaveRepository.GetAsync(x => x.Id == id,"Employee");
         }
 
         public async Task<List<Leave>> getIndividualEmployeeLeave(int id)
         {
-            return await unitOfWork.leaveRepository.GetAllAsync(x => x.EmployeeId == id);
+            return await unitOfWork.leaveRepository.GetAllAsync(x => x.EmployeeId == id,"Employee");
         }
         
 
@@ -100,7 +100,7 @@ namespace Payroll.Application.Services.ServiceImplementation
                             var reportHtml = GenerateMail(employee, leave);
                             await emailService.sendEmail(unitOfWork.empRepository.getEmpEmail(employee.UserId),
                             reportHtml,
-                           "Leave Approval for "+leave.LeaveDate);
+                           "Leave Approval for "+leave.LeaveDate.ToLongDateString);
                    
 
                     }

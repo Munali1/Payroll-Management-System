@@ -26,9 +26,6 @@
             <a class="nav-link text-light" asp-controller="Employee" asp-action="Details" asp-route-id="@id">Personal Details</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-light" asp-controller="Bank" asp-action="Create">Add Bank Details</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link text-light" asp-controller="Salary" asp-action="Details" asp-route-id="@id">Salary Details</a>
         </li>
         <li class="nav-item">
@@ -37,14 +34,18 @@
         <li class="nav-item">
             <a class="nav-link text-light" asp-controller="Leave" asp-action="EmployeeLeaves" asp-route-id="@id">Leaves</a>
         </li>
-
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-controller="Bank" asp-action="Create">Add Bank Details</a>
+        </li>
     }
 </ul>
+
 @if (User.IsInRole("Employee"))
 {
-    string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    int empId = employeeService.getEmpId(userid);
-    var attendance = await attendanceService.getLatest(empId);
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int empId = employeeService.getEmpId(userId);
+    var attendance = await attendanceService.getLatest(empId); 
+
     <partial name="_PunchInOut" model="attendance" />
 }
-<partial name="_LoginPartial" />
+<partial name="_LoginPartial"/>

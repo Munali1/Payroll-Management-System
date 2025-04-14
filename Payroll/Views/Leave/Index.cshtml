@@ -1,92 +1,158 @@
-﻿@using Payroll.Application.Services.ServiceInterface
-@using System.Security.Claims
+﻿@using Newtonsoft.Json
+@using Payroll.Application.Services.ServiceInterface
 @model IEnumerable<Payroll.Domain.Entities.Leave>
-@inject IEmployeeService employeeService
+@inject IEmployeeService employeeSevice
 @{
-    ViewBag.Title = "Leave Requests";
-    ViewBag.IsHr = User.IsInRole("HR");
-  
-
+    ViewData["Title"] = "Leave Requests";
+    bool isHr = User.IsInRole("HR");
 }
 
-<div id="leaveGridContainer"></div>
+<div class="container mt-4">
+    <h2 class="text-center">@ViewData["Title"]</h2>
 
-@section Scripts {
+    <div id="leaveGridContainer"></div>
+
     <script>
-        $(function() {
-        
+        var leaveData = @Html.Raw(JsonConvert.SerializeObject(Model.Select((leave, index) => new
+            {
+                No = index + 1,
+                Id = leave.Id,
+                EmployeeName = employeeSevice.getName(leave.Employee.UserId),
+                LeaveType = leave.LeaveType,
+                LeaveDate = leave.LeaveDate,
+                LeaveDuration = leave.LeaveDuration,
+                Status = leave.Status
+            })));
+
+        const isHr = @Html.Raw(JsonConvert.SerializeObject(isHr));
+
+        $(function () {
             $("#leaveGridContainer").dxDataGrid({
-                dataSource: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
-                columns: [
-                    {
-                       caption: "No", width: 50,
-        cellTemplate: function (container, options) {
-            container.text(options.rowIndex + 1);
-        }},
-                    {
-                        dataField: "name",
-                        caption: "Employee Name",
-                        allowSorting: true,
-                        width: 200
-                    },
-                    {
-                        dataField: "LeaveType",
-                        caption: "Leave Type",
-                        allowSorting: true,
-                        width: 150
-                    },
-                    {
-                        dataField: "LeaveDate",
-                        caption: "Leave Date",
-                        dataType: "date",
-                        format: "shortDate",
-                        allowSorting: true,
-                        width: 150
-                    },
-                    {
-                        dataField: "LeaveDuration",
-                        caption: "Leave Duration",
-                        allowSorting: true,
-                        width: 120
-                    },
-                    {
-                        dataField: "Status",
-                        caption: "Status",
-                        allowSorting: true,
-                        width: 120
-                    },
-                    {
-                        type: "buttons",
-                        caption: "Actions",
-                        buttons: [
-                            {
-                                hint: "Approve/Reject",
-                                icon: "check",
-                                visible: '@(ViewBag.IsHR ? "true" : "false")',
-                                onClick: function(e) {
-                                    var leaveId = e.row.data.Id;
-                                    window.location.href = '@Url.Action("ApproveLeave", "Leave", new { id = "__leaveId__" })'.replace("__leaveId__", leaveId);
-                                }
-                            }
-                        ]
-                    }
-                ],
+                dataSource: leaveData,
+                keyExpr: "Id",
+                columnAutoWidth: true,
+                showBorders: true,
+                filterRow: { visible: true },
+                searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                export: {
+                    enabled: true,
+                    fileName: "Leave_Requests",
+                    allowExportSelectedData: true
+                },
                 paging: {
                     pageSize: 10
                 },
                 pager: {
                     showPageSizeSelector: true,
-                    allowedPageSizes: [5, 10, 20]
+                    allowedPageSizes: [5, 10, 20],
+                    showInfo: true
                 },
-                sorting: {
-                    mode: "multiple"
+                onExporting: function(e) {
+                    var workbook = new ExcelJS.Workbook();
+                    var worksheet = workbook.addWorksheet("Leave Requests");
+
+                    DevExpress.excelExporter.exportDataGrid({
+                        component: e.component,
+                        worksheet: worksheet,
+                        autoFilterEnabled: true
+                    }).then(() => {
+                        workbook.xlsx.writeBuffer().then((buffer) => {
+                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Leave_Requests.xlsx");
+                        });
+                    });
+
+                    e.cancel = true;
                 },
-                filterRow: {
-                    visible: true,
-                    applyFilter: "auto"
+                toolbar: {
+                    items: [
+                        {
+                            widget: "dxButton",
+                            options: {
+                                icon: "exportxlsx",
+                                text: "Export to Excel",
+                                onClick: function() {
+                                    var dataGrid = $("#leaveGridContainer").dxDataGrid("instance");
+                                    var workbook = new ExcelJS.Workbook();
+                                    var worksheet = workbook.addWorksheet("Leave Requests");
+
+                                    DevExpress.excelExporter.exportDataGrid({
+                                        component: dataGrid,
+                                        worksheet: worksheet,
+                                        autoFilterEnabled: true
+                                    }).then(() => {
+                                        workbook.xlsx.writeBuffer().then((buffer) => {
+                                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Leave_Requests.xlsx");
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    ]
                 },
-                showBorders: true
+                columns: [
+                    {
+                        caption: "No",
+                        dataField: "No",
+                        width: 50
+                    },
+                    {
+                        caption: "Employee Name",
+                        dataField: "EmployeeName"
+                    },
+                    {
+                        caption: "Leave Type",
+                        dataField: "LeaveType"
+                    },
+                    {
+                        caption: "Leave Date",
+                        dataField: "LeaveDate",
+                        dataType: "date",
+                        format: "shortDate"
+                    },
+                    {
+                        caption: "Leave Duration",
+                        dataField: "LeaveDuration"
+                    },
+                    {
+                        caption: "Status",
+                        dataField: "Status",
+                        cellTemplate: function(container, options) {
+                            let color = "";
+                            switch ((options.value || "").toLowerCase()) {
+                                case "approved": color = "green"; break;
+                                case "rejected": color = "red"; break;
+                                case "pending": color = "orange"; break;
+                                default: color = "gray";
+                            }
+
+                            $("<span>")
+                                .text(options.value)
+                                .css({ color: color, fontWeight: "bold" })
+                                .appendTo(container);
+                        }
+                    },
+                    {
+                        caption: "Actions",
+                        allowExporting: false,
+                        width: 200,
+                        cellTemplate: function(container, options) {
+                            var id = options.data.Id;
+
+                            if (!isHr) return;
+
+                            var btnContainer = $("<div>").addClass("d-flex gap-2");
+
+                            $("<a>")
+                                .addClass("btn btn-success btn-sm")
+                                .attr("href", "/Leave/ApproveLeave?id=" + id)
+                                .text("Change Leave Status")
+                                .appendTo(btnContainer);
+
+                            btnContainer.appendTo(container);
+                        }
+                    }
+                ]
             });
         });
     </script>
-}
+</div>
