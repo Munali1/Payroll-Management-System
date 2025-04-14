@@ -1,62 +1,35 @@
-﻿@using Payroll.Application.Services.ServiceInterface
-@using System.Security.Claims
-@model IEnumerable<Payroll.Domain.Entities.Leave>
-@inject IEmployeeService employeeService
+﻿@model IEnumerable<Payroll.Domain.Entities.Leave>
+@using Newtonsoft.Json
 
 @{
-    ViewBag.Title = "Leave Requests";
-    var isHR = User.IsInRole("HR");
-    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    int empId = employeeService.getEmpId(userId);
-    string employeeName = employeeService.getName(userId);
+    ViewData["Title"] = "Leave Requests";
 }
 
-<h2 class="mb-4">Leave Requests</h2>
+<div class="container mt-4">
+    <h2 class="text-center">@ViewData["Title"]</h2>
+    <div id="leaveGridContainer"></div>
 
-@if (User.IsInRole("Employee"))
-{
-    <a asp-action="RequestLeave" asp-controller="Leave" class="btn btn-primary mb-3">Apply For Leave</a>
-}
-
-<div id="leaveGridContainer"></div>
-
-@section Scripts {
     <script>
-        $(function () {
-            const isHR = @Html.Raw(isHR.ToString().ToLower());
+      
+        var leaveData = @Html.Raw(JsonConvert.SerializeObject(Model.Select((leave, index) => new
+            {
+                No = index + 1,
+                Id = leave.Id,
+                LeaveType = leave.LeaveType,
+                LeaveDate = leave.LeaveDate.ToString("yyyy-MM-dd"),
+                LeaveDuration = leave.LeaveDuration,
+                Status = leave.Status
+            })));
 
+
+        $(function () {
             $("#leaveGridContainer").dxDataGrid({
-                dataSource: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
+                dataSource: leaveData,
                 keyExpr: "Id",
-                columns: [
-                    {
-                        dataField: "employeeName", 
-                        caption: "Employee Name",
-                        width: 200
-                    },
-                    {
-                        dataField: "leaveType",
-                        caption: "Leave Type",
-                        width: 150
-                    },
-                    {
-                        dataField: "leaveDate",
-                        caption: "Leave Date",
-                        dataType: "date",
-                        format: "shortDate",
-                        width: 150
-                    },
-                    {
-                        dataField: "leaveDuration",
-                        caption: "Duration (Days)",
-                        width: 120
-                    },
-                    {
-                        dataField: "status",
-                        caption: "Status",
-                        width: 120
-                    },
-                ],
+                columnAutoWidth: true,
+                showBorders: true,
+                filterRow: { visible: true },
+                searchPanel: { visible: true, width: 240, placeholder: "Search..." },
                 paging: {
                     pageSize: 10
                 },
@@ -65,17 +38,46 @@
                     allowedPageSizes: [5, 10, 20],
                     showInfo: true
                 },
-                sorting: {
-                    mode: "multiple"
-                },
-                filterRow: {
-                    visible: true,
-                    applyFilter: "auto"
-                },
-                columnAutoWidth: true,
-                showBorders: true,
-                rowAlternationEnabled: true
+                columns: [
+                    {
+                        caption: "No",
+                        dataField: "No",
+                        width: 50
+                    },
+                    {
+                        caption: "Leave Type",
+                        dataField: "LeaveType"
+                    },
+                    {
+                        caption: "Leave Date",
+                        dataField: "LeaveDate",
+                        dataType: "date",
+                        format: "shortDate"
+                    },
+                    {
+                        caption: "Leave Duration",
+                        dataField: "LeaveDuration"
+                    },
+                    {
+                        caption: "Status",
+                        dataField: "Status",
+                        cellTemplate: function(container, options) {
+                            let color = "";
+                            switch ((options.value || "").toLowerCase()) {
+                                case "approved": color = "green"; break;
+                                case "rejected": color = "red"; break;
+                                case "pending": color = "orange"; break;
+                                default: color = "gray";
+                            }
+
+                            $("<span>")
+                                .text(options.value)
+                                .css({ color: color, fontWeight: "bold" })
+                                .appendTo(container);
+                        }
+                    }
+                ]
             });
         });
     </script>
-}
+</div>

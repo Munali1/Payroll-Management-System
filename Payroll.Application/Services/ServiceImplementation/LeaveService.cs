@@ -100,7 +100,7 @@ namespace Payroll.Application.Services.ServiceImplementation
                             var reportHtml = GenerateMail(employee, leave);
                             await emailService.sendEmail(unitOfWork.empRepository.getEmpEmail(employee.UserId),
                             reportHtml,
-                           "Leave Approval for "+leave.LeaveDate.ToLongDateString);
+                           "Leave Approval for "+leave.LeaveDate.ToShortDateString());
                    
 
                     }

@@ -94,7 +94,15 @@ namespace Payroll.Web.Controllers
         public async Task<IActionResult> EmployeeLeaves(int empId)
         {
             var leaves = await leaveService.getIndividualEmployeeLeave(empId);
-            return View(leaves);
+            if (leaves == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return View(leaves);
+            }
+
         }
 
     }
