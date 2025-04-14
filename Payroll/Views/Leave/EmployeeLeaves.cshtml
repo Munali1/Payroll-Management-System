@@ -1,0 +1,81 @@
+﻿@using Payroll.Application.Services.ServiceInterface
+@using System.Security.Claims
+@model IEnumerable<Payroll.Domain.Entities.Leave>
+@inject IEmployeeService employeeService
+
+@{
+    ViewBag.Title = "Leave Requests";
+    var isHR = User.IsInRole("HR");
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int empId = employeeService.getEmpId(userId);
+    string employeeName = employeeService.getName(userId);
+}
+
+<h2 class="mb-4">Leave Requests</h2>
+
+@if (User.IsInRole("Employee"))
+{
+    <a asp-action="RequestLeave" asp-controller="Leave" class="btn btn-primary mb-3">Apply For Leave</a>
+}
+
+<div id="leaveGridContainer"></div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            const isHR = @Html.Raw(isHR.ToString().ToLower());
+
+            $("#leaveGridContainer").dxDataGrid({
+                dataSource: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
+                keyExpr: "Id",
+                columns: [
+                    {
+                        dataField: "employeeName", 
+                        caption: "Employee Name",
+                        width: 200
+                    },
+                    {
+                        dataField: "leaveType",
+                        caption: "Leave Type",
+                        width: 150
+                    },
+                    {
+                        dataField: "leaveDate",
+                        caption: "Leave Date",
+                        dataType: "date",
+                        format: "shortDate",
+                        width: 150
+                    },
+                    {
+                        dataField: "leaveDuration",
+                        caption: "Duration (Days)",
+                        width: 120
+                    },
+                    {
+                        dataField: "status",
+                        caption: "Status",
+                        width: 120
+                    },
+                ],
+                paging: {
+                    pageSize: 10
+                },
+                pager: {
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [5, 10, 20],
+                    showInfo: true
+                },
+                sorting: {
+                    mode: "multiple"
+                },
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                columnAutoWidth: true,
+                showBorders: true,
+                rowAlternationEnabled: true
+            });
+        });
+    </script>
+}

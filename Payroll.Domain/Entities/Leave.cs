@@ -17,9 +17,9 @@ namespace Payroll.Domain.Entities
         public string LeaveType { get; set; }
         public int EmployeeId { get; set; }
         public DateTime LeaveDate { get; set; }
-        public float LeaveDuration {  get; set; }
+        public double LeaveDuration {  get; set; }
         [ForeignKey("EmployeeId")]
-        public virtual Employee Employee { get; set; }
+        public virtual Employee? Employee { get; set; }
 
         public string LeaveReason {  get; set; }    
         public string? Status {  get; set; }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Payroll.Application.Services.ServiceImplementation;
 using Payroll.Application.Services.ServiceInterface;
@@ -14,12 +16,15 @@ namespace Payroll.Web.Controllers
         private readonly ILeaveService leaveService;
         private readonly IEmployeeService employeeService;
         private readonly IEmailServiceInterface emailService;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public LeaveController(ILeaveService leaveService,IEmployeeService employeeService,IEmailServiceInterface emailService)
+        public LeaveController(ILeaveService leaveService,IEmployeeService employeeService,IEmailServiceInterface emailService,UserManager<ApplicationUser> userManager)
         {
             this.leaveService = leaveService;
             this.employeeService = employeeService;
             this.emailService = emailService;
+            this.userManager = userManager;
+         
         }
         [Authorize(Roles ="Admin,HR")]
         public async Task< IActionResult> Index()
@@ -30,25 +35,36 @@ namespace Payroll.Web.Controllers
         [Authorize(Roles ="Employee")]
         public IActionResult RequestLeave()
         {
-            ViewBag.LeaveType=StaticValues.StaticValues.LeaveType;
+            ViewBag.LeaveType = StaticValues.StaticValues.LeaveType
+    .Select(l => new SelectListItem { Text = l, Value = l })
+    .ToList();
             return View();
         }
+   
         [HttpPost]
-        public IActionResult RequestLeave(int id)
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> RequestLeave(Leave leave)
         {
-            Leave leave = new Leave()
+            var user = await userManager.GetUserAsync(User);
+            leave.EmployeeId = employeeService.getEmpId(user.Id);
+            ViewBag.LeaveType = StaticValues.StaticValues.LeaveType
+                .Select(l => new SelectListItem { Text = l, Value = l })
+                .ToList();
+            leave.Status = "Pending";
+            if (!ModelState.IsValid)
             {
-                EmployeeId = id,
-                Status = "Pending"
-            };
-            leaveService.applyLeave(leave);
+                return View(leave); 
+            }
+            await leaveService.applyLeave(leave);
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
         [Authorize(Roles ="HR")]
         public IActionResult ApproveLeave(int id)
         {
             var leave = leaveService.getIndividuaLeave(id);
-            ViewBag.LeaveStatus=StaticValues.StaticValues.LeaveStatus;
+            ViewBag.LeaveStatus = StaticValues.StaticValues.LeaveStatus.Select(l => new SelectListItem { Text=l,Value=l });
             if(leave==null)
             {
                 return NotFound();
@@ -58,13 +74,13 @@ namespace Payroll.Web.Controllers
                 return View(leave);
             }
         }
-        [HttpPost]
+      
         [HttpPost]
         [Authorize(Roles = "HR")]
         public async Task<IActionResult> ApproveLeave(int id, string status,string remarks)
         {
             var leave = await leaveService.getIndividuaLeave(id);
-            ViewBag.LeaveStatus = StaticValues.StaticValues.LeaveStatus;
+            ViewBag.LeaveStatus = StaticValues.StaticValues.LeaveStatus.Select(l => new SelectListItem { Text = l, Value = l });
             if (leave == null)
             {
                 return NotFound(); 
@@ -74,6 +90,11 @@ namespace Payroll.Web.Controllers
             await leaveService.approveLeave(leave);
             await leaveService.LeaveApproveMail();
             return RedirectToAction("Index"); 
+        }
+        public async Task<IActionResult> EmployeeLeaves(int empId)
+        {
+            var leaves = await leaveService.getIndividualEmployeeLeave(empId);
+            return View(leaves);
         }
 
     }

@@ -12,8 +12,8 @@ using Payroll.Infrastructure.Data;
 namespace Payroll.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250325095045_AlterWorkingHours")]
-    partial class AlterWorkingHours
+    [Migration("20250414074048_addLeaves")]
+    partial class addLeaves
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -246,8 +246,8 @@ namespace Payroll.Infrastructure.Migrations
                     b.Property<DateTime?>("outTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<double?>("workingHours")
-                        .HasColumnType("float");
+                    b.Property<TimeSpan?>("workingHours")
+                        .HasColumnType("time");
 
                     b.HasKey("AttendenceId");
 
@@ -336,6 +336,44 @@ namespace Payroll.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.Leave", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LeaveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("LeaveDuration")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LeaveReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LeaveType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Leaves");
                 });
 
             modelBuilder.Entity("Payroll.Domain.Entities.Salary", b =>
@@ -454,6 +492,17 @@ namespace Payroll.Infrastructure.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("department");
+                });
+
+            modelBuilder.Entity("Payroll.Domain.Entities.Leave", b =>
+                {
+                    b.HasOne("Payroll.Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Payroll.Domain.Entities.Salary", b =>

@@ -24,5 +24,10 @@
             <td>@Model.PaymentDate.ToString("yyyy-MM-dd")</td>
         </tr>
     </table>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    @if(User.IsInRole("Employee")){
+        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to List</a>
+    }
+    else if(User.IsInRole("HR")){
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    }
 </div>

@@ -10,13 +10,13 @@
           "Senior",
           "Principal"
         };
-        public static readonly List<String> LeaveType = new List<string>
+        public static readonly List<string> LeaveType = new List<string>
         {
             "Sick",
             "Casual",
             "Life Events"
         };
-        public static readonly List<String> LeaveStatus = new List<string>
+        public static readonly List<string> LeaveStatus = new List<string>
         {
             "Approved",
             "Pending",

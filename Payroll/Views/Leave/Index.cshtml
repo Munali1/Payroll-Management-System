@@ -5,13 +5,9 @@
 @{
     ViewBag.Title = "Leave Requests";
     ViewBag.IsHr = User.IsInRole("HR");
-    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    string name = employeeService.getName(userId);
+  
 
 }
-
-<h2>Leave Requests</h2>
-
 
 <div id="leaveGridContainer"></div>
 
@@ -22,6 +18,11 @@
             $("#leaveGridContainer").dxDataGrid({
                 dataSource: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model)),
                 columns: [
+                    {
+                       caption: "No", width: 50,
+        cellTemplate: function (container, options) {
+            container.text(options.rowIndex + 1);
+        }},
                     {
                         dataField: "name",
                         caption: "Employee Name",

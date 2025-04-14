@@ -20,6 +20,12 @@
         <td>@Model.AccountHolderName</td>
     </tr>
 </table>
+@if(User.IsInRole("HR")){
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+}
+@if(User.IsInRole("Employee")){
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back</a>
+}
 
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-<a asp-action="Index" class="btn btn-secondary">Back</a>

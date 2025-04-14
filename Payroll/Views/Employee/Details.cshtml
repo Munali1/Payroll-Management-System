@@ -1,6 +1,6 @@
 ﻿@model Payroll.Domain.Entities.Employee
 
-
+@using System.Security.Claims
 @{
     ViewData["Title"] = "Employee Details";
 }
@@ -48,9 +48,11 @@
             </div>
         </div>
         @if(User.IsInRole("Employee")){
+            <a asp-action="Index"  asp-controller="Home" class="btn btn-secondary">Back to List</a>
+        }
+        else if(User.IsInRole("HR")||(User.IsInRole("Admin"))){
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
             <a asp-action="Index" class="btn btn-secondary">Back to List</a>
         }
-       
     </div>
 </div>
