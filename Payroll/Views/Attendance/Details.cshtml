@@ -10,7 +10,6 @@
         .Where(a => a.inTime.HasValue && a.outTime.HasValue)
         .GroupBy(a => new
         {
-          
             Date = a.inTime.Value.Date
         })
         .Select(g => new

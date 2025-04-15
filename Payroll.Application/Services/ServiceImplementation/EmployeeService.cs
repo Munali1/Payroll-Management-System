@@ -104,7 +104,7 @@ namespace Payroll.Application.Services.ServiceImplementation
 
                 existingEmployee.EmployeeImage = Path.Combine("uploads", fileName);
             }
-            existingEmployee.department.DepartmentId = employee.department.DepartmentId;
+            existingEmployee.DepartmentId = employee.DepartmentId;
             existingEmployee.Designation = employee.Designation;
             unitOfWork.empRepository.Update(existingEmployee);
             await unitOfWork.SaveAsync();

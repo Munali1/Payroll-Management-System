@@ -8,7 +8,7 @@
         e.ApplicationUser.FirstName,
         e.ApplicationUser.LastName,
         e.ApplicationUser.Email,
-        Department = e.DepartmentId, 
+        Department = e.DepartmentId,
         e.Designation,
         ImageUrl = string.IsNullOrEmpty(e.EmployeeImage) ? null : e.EmployeeImage
     }));
@@ -30,21 +30,16 @@
             },
             pager: {
                 showPageSizeSelector: true,
-                allowedPageSizes: [5, 10, 20],  await emailService.sendEmail(
-                    unitOfWork.empRepository.getEmpEmail(employee.UserId),
-                    salarySlipHtml,
-                    "Your Salary Slip for " + DateTime.Now.ToString("MMMM yyyy"),
-                    pdfBytes,
-                    "SalarySlip.pdf"
-                );
+                allowedPageSizes: [5, 10, 20],
                 showInfo: true
             },
             columns: [
                 {
-                       caption: "No", width: 50,
-        cellTemplate: function (container, options) {
-            container.text(options.rowIndex + 1);
-        }},
+                    caption: "No", width: 50,
+                    cellTemplate: function (container, options) {
+                        container.text(options.rowIndex + 1);
+                    }
+                },
                 { dataField: "FirstName", caption: "First Name" },
                 { dataField: "LastName", caption: "Last Name" },
                 { dataField: "Email", caption: "Email" },
@@ -56,9 +51,8 @@
                     cellTemplate: function (container, options) {
                         if (options.value) {
                             $("<img>")
-                                .attr("src", options.value)
-                                .css("width", "50px")
-                                .css("height", "50px")
+                                .attr("src", "/" + options.value) 
+                                .css({ width: "50px", height: "50px" })
                                 .appendTo(container);
                         } else {
                             container.append("No Image");

@@ -1,6 +1,7 @@
 ﻿@using Newtonsoft.Json
+@using Payroll.Application.Services.ServiceInterface
 @model IEnumerable<Payroll.Domain.Entities.Employee>
-
+@inject IEmployeeService employeeService
 @{
     ViewData["Title"] = "Employee List";
 }
@@ -20,9 +21,9 @@
             {
                 No = index + 1,
                 Id = emp.Id,
-                EmployeeName = emp.ApplicationUser.FirstName +" "+emp.ApplicationUser.LastName,
+                EmployeeName = employeeService.getName(emp.UserId),
                 Email = emp.ApplicationUser.Email,
-                Department = emp.DepartmentId,
+                Department = employeeService.getEmpDep(emp.Id),
                 Designation = emp.Designation,
                 EmployeeImage = emp.EmployeeImage
             })));

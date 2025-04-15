@@ -1,6 +1,7 @@
 ﻿@model Payroll.Domain.Entities.Employee
-
+@inject IEmployeeService employeeService
 @using System.Security.Claims
+@using Payroll.Application.Services.ServiceInterface
 @{
     ViewData["Title"] = "Employee Details";
 }
@@ -15,7 +16,7 @@
             <div class="col-md-4">
                 @if (!string.IsNullOrEmpty(Model.EmployeeImage))
                 {
-                    <img src="~/@Model.EmployeeImage" alt="Profile Image" class="img-thumbnail" width="150" height="150" />
+                    <img src="~/@Model.EmployeeImage" alt="Profile Image" class="img-thumbnail" width="350" height="350" />
                 }
                 else
                 {
@@ -38,7 +39,7 @@
                     </tr>
                     <tr>
                         <th>Department</th>
-                        <td>@Model.DepartmentId</td>
+                        <td>@employeeService.getEmpDep(Model.Id)</td>
                     </tr>
                     <tr>
                         <th>Designation</th>
