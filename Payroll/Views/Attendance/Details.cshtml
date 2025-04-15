@@ -1,21 +1,28 @@
 ﻿@using Newtonsoft.Json
-
 @model IEnumerable<Payroll.Domain.Entities.Attendence>
 
 @{
     ViewData["Title"] = "Attendance List";
 
-   
+    int year = DateTime.Now.Year;
+    int month = DateTime.Now.Month;
+    DateTime startDate = new DateTime(year, month, 1);
+    DateTime today = DateTime.Today;
+    int totalDays = DateTime.DaysInMonth(year, month);
+    DateTime endDate = new DateTime(year, month, totalDays);
+    DateTime validEndDate = today < endDate ? today : endDate;
+    int totalCountableDays = (validEndDate - startDate).Days + 1;
+
+    var workingDates = Enumerable.Range(0, totalCountableDays)
+        .Select(offset => startDate.AddDays(offset))
+        .Where(date => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+        .ToList();
     var groupedData = Model
         .Where(a => a.inTime.HasValue && a.outTime.HasValue)
-        .GroupBy(a => new
-        {
-            Date = a.inTime.Value.Date
-        })
+        .GroupBy(a => a.inTime.Value.Date)
         .Select(g => new
         {
-           
-            Date = g.Key.Date,
+            Date = g.Key,
             InTime = g.Min(x => x.inTime),
             OutTime = g.Max(x => x.outTime),
             TotalWorkingHours = TimeSpan
@@ -23,13 +30,18 @@
                 .ToString(@"hh\:mm")
         }).ToList();
 
-    var currentMonthDays = groupedData
-        .Where(g => g.Date.Month == DateTime.Now.Month && g.Date.Year == DateTime.Now.Year)
+    var presentDates = groupedData
+        .Where(g => g.Date <= validEndDate)
         .Select(g => g.Date)
         .Distinct()
-        .Count();
-    int totalDays = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
-    int absentDays = totalDays - currentMonthDays;
+        .ToList();
+
+    var absentDates = workingDates.Except(presentDates).ToList();
+
+    int weekendDays = totalCountableDays - workingDates.Count;
+    int workingDays = workingDates.Count;
+    int currentMonthDays = presentDates.Count;
+    int absentDays = absentDates.Count;
 
     var chartData = new
     {
@@ -40,6 +52,33 @@
 
 <div class="container mt-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
+    <div class="row mb-3 text-center">
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <strong>Total Days:</strong> @totalDays
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <strong>Weekends:</strong> @weekendDays
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <strong>Working Days:</strong> @workingDays
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3 text-success">
+                <strong>Present:</strong> @currentMonthDays
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3 text-danger">
+                <strong>Absent:</strong> @absentDays
+            </div>
+        </div>
+    </div>
 
     <div class="mb-4 text-center" style="display: flex; justify-content: center;">
         <canvas id="attendanceChart" width="250" height="250"></canvas>

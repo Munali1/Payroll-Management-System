@@ -22,5 +22,11 @@
             "Pending",
             "Rejected"
         };
+        public static int CountWeekendsLinq(DateTime start, DateTime end)
+        {
+            return Enumerable.Range(0, (end - start).Days + 1)
+                             .Select(offset => start.AddDays(offset))
+                             .Count(date => date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday);
+        }
     }
 }

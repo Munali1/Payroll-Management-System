@@ -20,11 +20,11 @@ namespace Payroll.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var AttendanceList = await attendenceService.getAttendenceList();
-            var TodayList = AttendanceList.Where(a => a.inTime.HasValue &&
+            var MonthList = AttendanceList.Where(a => a.inTime.HasValue &&
                  a.inTime.Value.Month == DateTime.Today.Month &&
                  a.inTime.Value.Year == DateTime.Today.Year)
                  .ToList();
-            return View(TodayList);
+            return View(MonthList);
         }
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> GetPunchInOutStatus(int employeeId)

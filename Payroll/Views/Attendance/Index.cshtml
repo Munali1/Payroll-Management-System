@@ -5,24 +5,6 @@
 
 @{
     ViewData["Title"] = "Attendence List";
-
-    var groupedData = Model
-        .Where(a => a.inTime != null && a.outTime != null)
-        .GroupBy(a => new
-        {
-            EmployeeName = employeeService.getName(a.Employee.UserId),
-            Date = a.inTime?.Date
-        })
-        .Select(g => new
-        {
-            EmployeeName = g.Key.EmployeeName,
-            Date = g.Key.Date,
-            InTime = g.Min(x => x.inTime),
-            OutTime = g.Max(x => x.outTime),
-            TotalWorkingHours = TimeSpan.FromHours(
-    g.Sum(x => x.workingHours.HasValue ? x.workingHours.Value.TotalHours : 0)
-        ).ToString(@"hh\:mm")
-        }).ToList();
 }
 
 <div class="container mt-4">
@@ -32,8 +14,7 @@
 
     <script>
         $(function(){
-            var attendenceData = @Html.Raw(JsonConvert.SerializeObject(groupedData));
-
+            var attendenceData = @Html.Raw(JsonConvert.SerializeObject(Model));
             $("#gridContainer").dxDataGrid({
                 dataSource: attendenceData,
                 keyExpr: "Date",

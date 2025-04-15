@@ -2,6 +2,7 @@
 @inject IAttendenceService attendanceService
 @using System.Security.Claims
 @using Payroll.Application.Services.ServiceInterface
+
 <ul class="navbar-nav me-auto">
     @if (User.IsInRole("Admin") || User.IsInRole("HR"))
     {
@@ -22,6 +23,8 @@
     {
         string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         int id = employeeService.getEmpId(userId);
+        var bank = await employeeService.EmployeeBankDetails(id);
+        bool check = bank == null ? true : false;
         <li class="nav-item">
             <a class="nav-link text-light" asp-controller="Employee" asp-action="Details" asp-route-id="@id">Personal Details</a>
         </li>
@@ -34,9 +37,12 @@
         <li class="nav-item">
             <a class="nav-link text-light" asp-controller="Leave" asp-action="EmployeeLeaves" asp-route-id="@id">Leaves</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-controller="Bank" asp-action="Create">Add Bank Details</a>
-        </li>
+        if(check){
+            <li class="nav-item">
+                <a class="nav-link text-light" asp-controller="Bank" asp-action="Create">Add Bank Details</a>
+            </li>
+        }
+    
     }
 </ul>
 
