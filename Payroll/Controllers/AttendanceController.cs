@@ -20,7 +20,10 @@ namespace Payroll.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var AttendanceList = await attendenceService.getAttendenceList();
-            var TodayList = AttendanceList.Where(a => a.inTime.Value.Date == DateTime.Today).ToList();
+            var TodayList = AttendanceList.Where(a => a.inTime.HasValue &&
+                 a.inTime.Value.Month == DateTime.Today.Month &&
+                 a.inTime.Value.Year == DateTime.Today.Year)
+                 .ToList();
             return View(TodayList);
         }
         [Authorize(Roles = "Employee")]

@@ -48,7 +48,9 @@
             </div>
         </div>
         @if(User.IsInRole("Employee")){
-            <a asp-action="Index"  asp-controller="Home" class="btn btn-secondary">Back to List</a>
+            <a asp-action="ChangePassword" asp-controller="Employee" class="btn btn-primary">Change Password</a>
+            <a asp-action="Index"  asp-controller="Home" class="btn btn-secondary">Back to Home Page</a>
+
         }
         else if(User.IsInRole("HR")||(User.IsInRole("Admin"))){
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>

@@ -1,51 +1,50 @@
 ﻿@using Newtonsoft.Json
+@using Payroll.Application.Services.ServiceInterface
 @model IEnumerable<Payroll.Domain.Entities.Attendence>
+@inject IEmployeeService employeeService
+
 @{
     ViewData["Title"] = "Attendence List";
+
+    var groupedData = Model
+        .Where(a => a.inTime != null && a.outTime != null)
+        .GroupBy(a => new
+        {
+            EmployeeName = employeeService.getName(a.Employee.UserId),
+            Date = a.inTime?.Date
+        })
+        .Select(g => new
+        {
+            EmployeeName = g.Key.EmployeeName,
+            Date = g.Key.Date,
+            InTime = g.Min(x => x.inTime),
+            OutTime = g.Max(x => x.outTime),
+            TotalWorkingHours = TimeSpan.FromHours(
+    g.Sum(x => x.workingHours.HasValue ? x.workingHours.Value.TotalHours : 0)
+        ).ToString(@"hh\:mm")
+        }).ToList();
 }
 
 <div class="container mt-4">
     <h2 class="text-center">@ViewData["Title"]</h2>
 
-
     <div id="gridContainer"></div>
 
     <script>
         $(function(){
-            var attendenceData = @Html.Raw(JsonConvert.SerializeObject(Model.Select(s => new
-            {
-                Id = s.AttendenceId,
-                inTime = s.inTime,
-                outTime = s.outTime,
-                workingHours = s.workingHours,
-                EmployeeName = s.Employee != null ? s.Employee.ApplicationUser.FirstName + " " + s.Employee.ApplicationUser.LastName : "N/A"
-            })));
+            var attendenceData = @Html.Raw(JsonConvert.SerializeObject(groupedData));
 
             $("#gridContainer").dxDataGrid({
                 dataSource: attendenceData,
-                keyExpr: "Id",
+                keyExpr: "Date",
                 columnAutoWidth: true,
                 showBorders: true,
                 filterRow: { visible: true },
                 searchPanel: { visible: true, width: 240, placeholder: "Search..." },
                 export: {
                     enabled: true,
-                    fileName: "Attendence_List",
+                    fileName: "Grouped_Attendance_List",
                     allowExportSelectedData: true
-                },
-                onExporting: function (e) {
-                    var workbook = new ExcelJS.Workbook();
-                    var worksheet = workbook.addWorksheet("Attendence List");
-                    DevExpress.excelExporter.exportDataGrid({
-                        component: e.component,
-                        worksheet: worksheet,
-                        autoFilterEnabled: true
-                    }).then(() => {
-                        workbook.xlsx.writeBuffer().then((buffer) => {
-                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Attendence_List.xlsx");
-                        });
-                    });
-                    e.cancel = true;
                 },
                 toolbar: {
                     items: [
@@ -57,14 +56,14 @@
                                 onClick: function () {
                                     var dataGrid = $("#gridContainer").dxDataGrid("instance");
                                     var workbook = new ExcelJS.Workbook();
-                                    var worksheet = workbook.addWorksheet("Attendence List");
+                                    var worksheet = workbook.addWorksheet("Attendance List");
                                     DevExpress.excelExporter.exportDataGrid({
                                         component: dataGrid,
                                         worksheet: worksheet,
                                         autoFilterEnabled: true
                                     }).then(() => {
                                         workbook.xlsx.writeBuffer().then((buffer) => {
-                                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Attendence_List.xlsx");
+                                            saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Grouped_Attendance_List.xlsx");
                                         });
                                     });
                                 }
@@ -74,14 +73,16 @@
                 },
                 columns: [
                     {
-                       caption: "No", width: 50,
-        cellTemplate: function (container, options) {
-            container.text(options.rowIndex + 1);
-        }},
+                        caption: "No", width: 50,
+                        cellTemplate: function (container, options) {
+                            container.text(options.rowIndex + 1);
+                        }
+                    },
                     { caption: "Employee Name", dataField: "EmployeeName" },
-                    { caption: "In Time", dataField: "inTime", dataType: "datetime" },
-                    { caption: "Out Time", dataField: "outTime", dataType: "datetime" },
-                    { caption: "Working Hours", dataField: "workingHours", dataType: "number" }
+                    { caption: "Date", dataField: "Date", dataType: "date" },
+                    { caption: "In Time", dataField: "InTime", dataType: "datetime" },
+                    { caption: "Out Time", dataField: "OutTime", dataType: "datetime" },
+                    { caption: "Total Working Hours", dataField: "TotalWorkingHours", dataType: "number" }
                 ]
             });
         });

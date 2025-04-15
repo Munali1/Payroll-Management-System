@@ -6,7 +6,7 @@
       
         @{
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int empId = employeeService.getEmpId(userId);
+            int id = employeeService.getEmpId(userId);
         }
 
         <div class="col-md-4">
@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <i class="bi bi-person-circle display-4 text-primary"></i>
                     <h5 class="card-title">Personal Details</h5>
-                    <a asp-controller="Employee" asp-action="Details" asp-route-id="@empId" class="btn btn-primary">View</a>
+                    <a asp-controller="Employee" asp-action="Details" asp-route-id="@id" class="btn btn-primary">View</a>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <i class="bi bi-bank display-4 text-success"></i>
                     <h5 class="card-title">Bank Details</h5>
-                    <a asp-controller="Bank" asp-action="Details" asp-route-id="@empId" class="btn btn-success">View</a>
+                    <a asp-controller="Bank" asp-action="Details" asp-route-id="@id" class="btn btn-success">View</a>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 <div class="card-body">
                     <i class="bi bi-cash display-4 text-warning"></i>
                     <h5 class="card-title">Salary Details</h5>
-                    <a asp-controller="Salary" asp-action="Details" asp-route-id="@empId" class="btn btn-warning">View</a>
+                    <a asp-controller="Salary" asp-action="Details" asp-route-id="@id" class="btn btn-warning">View</a>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
                 <div class="card-body">
                     <i class="bi bi-calendar-check display-4 text-info"></i>
                     <h5 class="card-title">Attendance</h5>
-                    <a asp-controller="Attendance" asp-action="Details" asp-route-id="@empId" class="btn btn-info">View</a>
+                    <a asp-controller="Attendance" asp-action="Details" asp-route-id="@id" class="btn btn-info">View</a>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
                 <div class="card-body">
                     <i class="bi bi-calendar-event display-4 text-danger"></i>
                     <h5 class="card-title">Leaves</h5>
-                    <a asp-controller="Leave" asp-action="EmployeeLeaves" asp-route-id="@empId" class="btn btn-danger">View</a>
+                    <a asp-controller="Leave" asp-action="EmployeeLeaves" asp-route-id="@id" class="btn btn-danger">View</a>
                 </div>
             </div>
         </div>

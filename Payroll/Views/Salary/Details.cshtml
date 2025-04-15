@@ -1,11 +1,12 @@
-﻿@model Payroll.Domain.Entities.Salary
-
+﻿@using Payroll.Application.Services.ServiceInterface
+@model Payroll.Domain.Entities.Salary
+@inject IEmployeeService employeeService
 <div class="container">
     <h2</h2>
     <table class="table table-bordered">
         <tr>
             <th>Employee Name</th>
-            <td>@($"{Model.Employee.ApplicationUser.FirstName} {Model.Employee.ApplicationUser.LastName}")</td>
+            <td>@employeeService.getName(Model.Employee.UserId)</td>
         </tr>
         <tr>
             <th>Salary Amount</th>
@@ -25,7 +26,7 @@
         </tr>
     </table>
     @if(User.IsInRole("Employee")){
-        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to List</a>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home Page</a>
     }
     else if(User.IsInRole("HR")){
         <a asp-action="Index" class="btn btn-secondary">Back to List</a>

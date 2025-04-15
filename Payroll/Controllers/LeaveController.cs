@@ -91,9 +91,9 @@ namespace Payroll.Web.Controllers
             await leaveService.LeaveApproveMail();
             return RedirectToAction("Index"); 
         }
-        public async Task<IActionResult> EmployeeLeaves(int empId)
+        public async Task<IActionResult> EmployeeLeaves(int id)
         {
-            var leaves = await leaveService.getIndividualEmployeeLeave(empId);
+            var leaves = await leaveService.getIndividualEmployeeLeave(id);
             if (leaves == null)
             {
                 return NotFound();

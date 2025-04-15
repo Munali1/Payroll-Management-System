@@ -76,7 +76,7 @@ namespace Payroll.Application.Services.ServiceImplementation
             var monthlyattendence = await unitOfWork.attendanceRepository.GetAllAsync(
                 a => a.EmployeeId == EmpId &&
                 a.inTime.HasValue && a.inTime.Value.Month == currentMonth &&
-                a.inTime.Value.Year == currentYear);
+                a.inTime.Value.Year == currentYear,"Employee");
             return monthlyattendence;
         }
 
