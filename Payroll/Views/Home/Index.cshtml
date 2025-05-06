@@ -2,27 +2,36 @@
 @using Payroll.Domain.Entities
 
 @inject SignInManager<ApplicationUser> SignInManager
+
 @{
     ViewData["Title"] = "Home Page";
 }
-@if (!SignInManager.IsSignedIn(User)){
-    <div class="card text-center mx-auto mt-5" style="max-width: 600px;">
-        <div class="card-body">
-            <h1 class="mb-3">Welcome to Payroll Management System</h1>
-            <h3 class="mb-4">Please Login to proceed further</h3>
-            <div class="d-flex justify-content-center gap-3">
-                <a class="btn btn-outline-primary px-4" asp-area="Identity" asp-page="/Account/Login">Login</a>
-            </div>
+
+@if (!SignInManager.IsSignedIn(User))
+{
+    <div class="card shadow-lg text-center mx-auto mt-5" style="max-width: 600px;">
+        <div class="card-body py-5">
+            <h1 class="mb-3 fw-bold d-flex justify-content-center align-items-center gap-2">
+                <i class="bi bi-cash-coin text-primary"></i> ElevatePay
+            </h1>
+            <p class="text-muted fst-italic mb-4">Empowering Payroll, Elevating People</p>
+
+            <h4 class="mb-4">Please log in to access the system</h4>
+
+            <a class="btn btn-primary px-4 py-2 d-inline-flex align-items-center gap-2" asp-area="Identity" asp-page="/Account/Login">
+                <i class="bi bi-box-arrow-in-right"></i> <strong>Login</strong>
+            </a>
         </div>
     </div>
 }
-else{
+else
+{
     @if (User.IsInRole("Admin") || User.IsInRole("HR"))
     {
         <partial name="_AdminHrPartial" />
     }
-    else{
+    else
+    {
         <partial name="_EmployeePartial" />
     }
 }
-
