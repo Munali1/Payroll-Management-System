@@ -3,43 +3,54 @@
 @using System.Security.Claims
 @using Payroll.Application.Services.ServiceImplementation
 @using Payroll.Application.Services.ServiceInterface
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Payroll Management</title>
+    <title>@ViewData["Title"] - ElevatePay</title>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.3/css/dx.material.blue.light.css">
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.3/css/dx.material.blue.light.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="icon" href="~/Images/logo.png">
+    <link rel="icon" href="~/Images/App_logo.png" />
+
+    <!-- JavaScript Libraries -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn3.devexpress.com/jslib/24.2.3/js/dx.all.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-secondary shadow-sm">
             <div class="container">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">Payroll Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <div class="d-flex flex-column">
+                    <a class="navbar-brand fw-bold mb-0 d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/Images/App_logo.png" alt="ElevatePay Logo" height="30" class="me-2" />
+                        ElevatePay
+                    </a>
+                    <small class="text-white fst-italic">Empowering Payroll, Elevating People</small>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
-                  <partial name="_Navbarpartial" />
+                    <partial name="_Navbarpartial" />
                 </div>
             </div>
         </nav>
     </header>
 
     <div class="container mt-4">
-       
         <main role="main" class="py-4">
             @RenderBody()
         </main>
@@ -47,13 +58,14 @@
 
     <footer class="bg-light text-center py-3 mt-5 shadow-sm">
         <div class="container">
-            &copy; 2025 - Payroll Management - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - ElevatePay &mdash; <span class="fst-italic">Empowering Payroll, Elevating People</span>
         </div>
     </footer>
 
- 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Bootstrap JS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
