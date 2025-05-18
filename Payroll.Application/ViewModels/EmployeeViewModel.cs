@@ -11,9 +11,7 @@ namespace Payroll.Application.ViewModels
     public class EmployeeViewModel
     {
         public string UserId { get; set; }
-      
         public int? DepartmentId { get; set; }
-     
         public string? Designation { get; set; }
         public string? EmployeeImage { get; set; }
     }
